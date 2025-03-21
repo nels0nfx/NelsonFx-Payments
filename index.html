@@ -7,112 +7,80 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
+            background-color: black;
+            color: white;
             text-align: center;
             margin: 0;
             padding: 0;
         }
         .container {
-            max-width: 400px;
+            max-width: 600px;
             margin: 50px auto;
-            padding: 20px;
-            background: #111;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-        h1 {
-            color: #FFD700;
-        }
-        .payment-box {
             background: #222;
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
-            margin-top: 15px;
         }
-        .payment-box p {
-            font-size: 16px;
+        h2 {
+            color: #ffcc00;
         }
-        .pay-btn {
-            background: #FFD700;
+        .price-option {
+            background: #333;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .button {
+            background: #ffcc00;
             color: black;
             padding: 10px 15px;
-            text-decoration: none;
-            font-size: 18px;
+            display: block;
+            margin: 10px auto;
             border-radius: 5px;
-            display: inline-block;
-            margin-top: 15px;
-            transition: 0.3s;
-        }
-        .pay-btn:hover {
-            background: #fff;
-            color: #000;
-        }
-        .support {
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        .back-btn {
-            display: inline-block;
-            margin-top: 15px;
-            background: #555;
-            color: #fff;
-            padding: 8px 15px;
             text-decoration: none;
-            border-radius: 5px;
-            transition: 0.3s;
+            font-weight: bold;
         }
-        .back-btn:hover {
-            background: #777;
+        .button:hover {
+            background: #ffaa00;
         }
-        /* WhatsApp Floating Button */
-        .whatsapp-float {
+        .whatsapp-icon {
             position: fixed;
             bottom: 20px;
             left: 20px;
             width: 50px;
             height: 50px;
-            background: #25D366;
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.3s;
-        }
-        .whatsapp-float img {
-            width: 30px;
-            height: 30px;
-        }
-        .whatsapp-float:hover {
-            background: #1EBE5D;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <h1>NelsonFx Payments</h1>
-        <div class="payment-box">
-            <p>💳 <strong>Pay securely via OPay to get access.</strong></p>
-            <p>Send payment to:</p>
-            <p><strong>Opay Account Number:</strong> 8125658151</p>
-            <p><strong>Account Name:</strong> Chukwuwetalu Nelson Chinecherem</p>
-            <a href="https://opayweb.com/" class="pay-btn" target="_blank">Pay Now</a>
+        <h2>Pay Securely via OPay or Card</h2>
+
+        <div class="price-option">
+            <h3>📈 Premium Signals</h3>
+            <p>₦50,000/month</p>
+            <p>₦200,000/year</p>
         </div>
 
-        <div class="support">
-            <p>📩 Need help? Contact us:</p>
-            <p>Email: <a href="mailto:nwekechinecherem03@gmail.com" style="color: #FFD700;">nwekechinecherem03@gmail.com</a></p>
+        <div class="price-option">
+            <h3>📚 Forex Learning</h3>
+            <p>₦70,000/month</p>
+            <p>₦250,000/year</p>
         </div>
 
-        <a href="index.html" class="back-btn">🔙 Back to Home</a>
+        <h3>Select Payment Method:</h3>
+
+        <a href="https://paystack.com/pay/your-link" class="button">💳 Pay with Card (Paystack)</a>
+
+        <div class="price-option">
+            <h3>💰 Pay via Bank Transfer</h3>
+            <p><strong>Opay Account:</strong> 8125658151</p>
+            <p><strong>Name:</strong> Chukwuwetalu Nelson Chinecherem</p>
+            <p>After payment, contact us on WhatsApp to get access.</p>
+        </div>
+
+        <a href="https://wa.me/2349138567333" target="_blank">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
+        </a>
     </div>
-
-    <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/2349138567333" target="_blank" class="whatsapp-float">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
-    </a>
-
 </body>
 </html>
