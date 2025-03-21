@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to your existing CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        .admin-login, .admin-dashboard {
+            background: white;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button.logout {
+            background: red;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .proofs {
+            text-align: left;
+            max-width: 500px;
+            margin: 20px auto;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Admin Login -->
+    <div class="admin-login">
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+        <button onclick="checkLogin()">Login</button>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div class="admin-dashboard hidden">
+        <h1>Welcome, Admin</h1>
+
+        <h2>Payment Approvals</h2>
+        <div id="payment-list">
+            <p>Loading payments...</p>
+        </div>
+
+        <h2>User Subscriptions</h2>
+        <div id="user-list">
+            <p>Loading users...</p>
+        </div>
+
+        <h2>Uploaded Payment Proofs</h2>
+        <div class="proofs">
+            <p><strong>John Doe:</strong> <a href="#">View Proof</a></p>
+            <p><strong>Jane Doe:</strong> <a href="#">View Proof</a></p>
+        </div>
+
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        function checkLogin() {
+            var password = document.getElementById('adminPassword').value;
+            if (password === "2468Abcd") { 
+                document.querySelector('.admin-login').classList.add('hidden');
+                document.querySelector('.admin-dashboard').classList.remove('hidden');
+            } else {
+                alert('Incorrect password');
+            }
+        }
+
+        function logout() {
+            document.querySelector('.admin-dashboard').classList.add('hidden');
+            document.querySelector('.admin-login').classList.remove('hidden');
+            document.getElementById('adminPassword').value = "";
+        }
+
+        // Simulated data (Replace with backend in the future)
+        document.getElementById('payment-list').innerHTML = "<p>John Doe - ₦50,000 (Pending Approval)</p>";
+        document.getElementById('user-list').innerHTML = "<p>Jane Doe - VIP Signals Member</p>";
+
+    </script>
+
+</body>
+</html>
