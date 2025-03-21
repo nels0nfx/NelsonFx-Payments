@@ -49,6 +49,16 @@
             width: 50px;
             height: 50px;
         }
+        .faq, .testimonials, .receipt {
+            background: #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: left;
+        }
+        .receipt {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -75,12 +85,43 @@
             <h3>💰 Pay via Bank Transfer</h3>
             <p><strong>Opay Account:</strong> 8125658151</p>
             <p><strong>Name:</strong> Chukwuwetalu Nelson Chinecherem</p>
-            <p>After payment, contact us on WhatsApp to get access.</p>
+            <p>After payment, upload proof below or contact us on WhatsApp.</p>
         </div>
 
+        <!-- Payment Confirmation Form -->
+        <div class="price-option">
+            <h3>📤 Upload Payment Proof</h3>
+            <form id="paymentForm">
+                <input type="file" id="proof" required><br><br>
+                <button type="button" class="button" onclick="submitProof()">Submit Payment Proof</button>
+            </form>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq">
+            <h3>❓ Frequently Asked Questions</h3>
+            <p><strong>How do I get access after payment?</strong><br>After payment, upload proof or contact us via WhatsApp.</p>
+            <p><strong>Do you offer refunds?</strong><br>No, all sales are final.</p>
+            <p><strong>How long does payment verification take?</strong><br>Usually within 30 minutes.</p>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="testimonials">
+            <h3>🌟 What Our Clients Say</h3>
+            <p>"NelsonFx signals changed my trading game!" - <em>John Doe</em></p>
+            <p>"Very accurate analysis, 100% recommended!" - <em>Jane Smith</em></p>
+        </div>
+
+        <!-- WhatsApp Button -->
         <a href="https://wa.me/2349138567333" target="_blank">
             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="whatsapp-icon">
         </a>
     </div>
+
+    <script>
+        function submitProof() {
+            alert("Payment proof submitted! We will verify and contact you soon.");
+        }
+    </script>
 </body>
 </html>
