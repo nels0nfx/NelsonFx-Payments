@@ -38,6 +38,32 @@
             width: 50px;
             height: 50px;
         }
+        .faq-item {
+            background: #333;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .faq-answer {
+            display: none;
+            padding: 10px;
+            background: #444;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .testimonials {
+            margin-top: 20px;
+            padding: 10px;
+            background: #222;
+            border-radius: 10px;
+        }
+        .testimonial {
+            display: none;
+        }
+        .testimonial.active {
+            display: block;
+        }
     </style>
 
     <!-- Google Analytics (Visitor Tracking) -->
@@ -67,6 +93,25 @@
 
         <p>After payment, upload your proof of payment below:</p>
         <a href="mailto:nwekechinecherem03@gmail.com" class="button">Send Proof</a>
+
+        <!-- FAQ Section -->
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item" onclick="toggleFAQ(1)">How do I make a payment?</div>
+        <div class="faq-answer" id="faq1">You can pay securely via OPay by clicking the "Pay Now" button.</div>
+
+        <div class="faq-item" onclick="toggleFAQ(2)">How do I get access after payment?</div>
+        <div class="faq-answer" id="faq2">After payment, send proof to our email or WhatsApp.</div>
+
+        <div class="faq-item" onclick="toggleFAQ(3)">Can I pay monthly or yearly?</div>
+        <div class="faq-answer" id="faq3">Yes, we offer both monthly and yearly payment options.</div>
+
+        <!-- Testimonials Section -->
+        <h2>What Our Clients Say</h2>
+        <div class="testimonials">
+            <div class="testimonial active">"NelsonFx signals have helped me grow my forex trading!" – John D.</div>
+            <div class="testimonial">"Very professional service and great forex education!" – Sarah K.</div>
+            <div class="testimonial">"Highly recommend! The best forex signals I’ve used." – Michael O.</div>
+        </div>
     </div>
 
     <!-- WhatsApp Support Icon -->
@@ -85,6 +130,30 @@
         s1.setAttribute('crossorigin','*');
         s0.parentNode.insertBefore(s1,s0);
         })();
+    </script>
+
+    <!-- FAQ Toggle Script -->
+    <script>
+        function toggleFAQ(num) {
+            let answer = document.getElementById("faq" + num);
+            if (answer.style.display === "block") {
+                answer.style.display = "none";
+            } else {
+                answer.style.display = "block";
+            }
+        }
+    </script>
+
+    <!-- Testimonial Rotation -->
+    <script>
+        let index = 0;
+        function showTestimonial() {
+            let testimonials = document.querySelectorAll(".testimonial");
+            testimonials.forEach((t, i) => t.classList.remove("active"));
+            testimonials[index].classList.add("active");
+            index = (index + 1) % testimonials.length;
+        }
+        setInterval(showTestimonial, 3000);
     </script>
 
 </body>
