@@ -49,15 +49,43 @@
             width: 50px;
             height: 50px;
         }
-        .faq, .testimonials, .receipt {
+        .faq {
             background: #333;
             padding: 15px;
             margin: 20px 0;
             border-radius: 8px;
             text-align: left;
         }
-        .receipt {
+        .faq-question {
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 0;
+            padding: 10px;
+            background: #444;
+            border-radius: 5px;
+        }
+        .faq-answer {
             display: none;
+            padding: 10px;
+            background: #555;
+            border-radius: 5px;
+        }
+        .testimonials {
+            background: #333;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            height: 120px;
+        }
+        .testimonial-slide {
+            display: none;
+            font-style: italic;
+            font-size: 16px;
+        }
+        .testimonial-slide.active {
+            display: block;
         }
     </style>
 </head>
@@ -88,28 +116,25 @@
             <p>After payment, upload proof below or contact us on WhatsApp.</p>
         </div>
 
-        <!-- Payment Confirmation Form -->
-        <div class="price-option">
-            <h3>📤 Upload Payment Proof</h3>
-            <form id="paymentForm">
-                <input type="file" id="proof" required><br><br>
-                <button type="button" class="button" onclick="submitProof()">Submit Payment Proof</button>
-            </form>
-        </div>
-
         <!-- FAQ Section -->
         <div class="faq">
             <h3>❓ Frequently Asked Questions</h3>
-            <p><strong>How do I get access after payment?</strong><br>After payment, upload proof or contact us via WhatsApp.</p>
-            <p><strong>Do you offer refunds?</strong><br>No, all sales are final.</p>
-            <p><strong>How long does payment verification take?</strong><br>Usually within 30 minutes.</p>
+            <div class="faq-question" onclick="toggleFAQ(0)">📌 How do I get access after payment?</div>
+            <div class="faq-answer">After payment, upload proof or contact us via WhatsApp.</div>
+
+            <div class="faq-question" onclick="toggleFAQ(1)">📌 Do you offer refunds?</div>
+            <div class="faq-answer">No, all sales are final.</div>
+
+            <div class="faq-question" onclick="toggleFAQ(2)">📌 How long does payment verification take?</div>
+            <div class="faq-answer">Usually within 30 minutes.</div>
         </div>
 
         <!-- Testimonials -->
         <div class="testimonials">
             <h3>🌟 What Our Clients Say</h3>
-            <p>"NelsonFx signals changed my trading game!" - <em>John Doe</em></p>
-            <p>"Very accurate analysis, 100% recommended!" - <em>Jane Smith</em></p>
+            <p class="testimonial-slide active">"NelsonFx signals changed my trading game!" - <em>John Doe</em></p>
+            <p class="testimonial-slide">"Very accurate analysis, 100% recommended!" - <em>Jane Smith</em></p>
+            <p class="testimonial-slide">"Best forex education, highly detailed and easy to understand!" - <em>Michael Lee</em></p>
         </div>
 
         <!-- WhatsApp Button -->
@@ -119,9 +144,25 @@
     </div>
 
     <script>
-        function submitProof() {
-            alert("Payment proof submitted! We will verify and contact you soon.");
+        function toggleFAQ(index) {
+            let answers = document.querySelectorAll(".faq-answer");
+            let currentDisplay = answers[index].style.display;
+            answers.forEach(a => a.style.display = "none"); 
+            answers[index].style.display = (currentDisplay === "block") ? "none" : "block";
         }
+
+        function rotateTestimonials() {
+            let testimonials = document.querySelectorAll(".testimonial-slide");
+            let activeIndex = 0;
+            
+            setInterval(() => {
+                testimonials[activeIndex].classList.remove("active");
+                activeIndex = (activeIndex + 1) % testimonials.length;
+                testimonials[activeIndex].classList.add("active");
+            }, 3000);
+        }
+
+        rotateTestimonials();
     </script>
 </body>
 </html>
