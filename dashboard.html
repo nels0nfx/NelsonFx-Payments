@@ -4,8 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel - NelsonFx</title>
+
+  <!-- Style & Script -->
   <link rel="stylesheet" href="admin-style.css" />
   <script src="admin-script.js" defer></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <div class="admin-container">
@@ -23,9 +28,11 @@
     <!-- Dashboard Section -->
     <div id="dashboard" class="section">
       <h2>Dashboard</h2>
-      <p>Welcome, Admin! Here’s your quick overview:</p>
-      <p><strong>Total Payments:</strong> 0</p>
-      <p><strong>Active Subscriptions:</strong> 0</p>
+      <div style="text-align:center;">
+        <p><strong>Total Payments:</strong> <span id="total-payments">0</span></p>
+        <p><strong>Active Subscriptions:</strong> <span id="active-subs">0</span></p>
+        <canvas id="analyticsChart" width="300" height="200"></canvas>
+      </div>
     </div>
 
     <!-- Manage Payments -->
@@ -48,9 +55,7 @@
     <!-- Manage Chat Section -->
     <div id="chat-section" class="section" style="display: none;">
       <h2>Manage Chats</h2>
-      <div id="chat-container">
-        <!-- Loaded dynamically via JavaScript -->
-      </div>
+      <div id="chat-container"></div>
     </div>
 
     <!-- Settings Section -->
@@ -65,5 +70,53 @@
   <footer>
     <p>&copy; 2025 NelsonFx Admin Panel. All Rights Reserved.</p>
   </footer>
+
+  <script>
+    // Animate counters
+    function animateValue(id, start, end, duration) {
+      let obj = document.getElementById(id);
+      let range = end - start;
+      let current = start;
+      let increment = end > start ? 1 : -1;
+      let stepTime = Math.abs(Math.floor(duration / range));
+
+      let timer = setInterval(function () {
+        current += increment;
+        obj.textContent = current;
+        if (current == end) clearInterval(timer);
+      }, stepTime);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      animateValue("total-payments", 0, 48, 1000); // animate to 48
+      animateValue("active-subs", 0, 19, 1200); // animate to 19
+
+      // Chart.js setup
+      const ctx = document.getElementById('analyticsChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+          datasets: [{
+            label: 'Monthly Payments',
+            data: [5, 10, 8, 15, 20, 25],
+            borderColor: '#00ffcc',
+            backgroundColor: '#00ffcc44',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { labels: { color: '#fff' } }
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>
