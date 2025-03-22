@@ -71,29 +71,43 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    document.getElementById("registerForm").addEventListener("submit", function (e) {
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          return db.collection("users").doc(user.uid).set({
-            name: name,
-            email: email,
-            subscription: 0,
-            registeredAt: new Date().toISOString()
-          });
-        })
-        .then(() => {
-          alert("Registration successful!");
-          window.location.href = "login.html";
-        })
-        .catch((error) => {
-          alert("Registration failed: " + error.message);
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await db.collection("users").doc(user.uid).set({
+          name: name,
+          email: email,
+          subscription: 0,
+          registeredAt: new Date().toISOString()
         });
+
+        // Send welcome email via FormSubmit
+        await fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            _subject: "New User Registered - NelsonFx",
+            Name: name,
+            Email: email,
+            Message: `A new user has registered on NelsonFx:\n\nName: ${name}\nEmail: ${email}`
+          })
+        });
+
+        alert("Registration successful! Welcome email sent.");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Registration failed: " + error.message);
+      }
     });
   </script>
 
