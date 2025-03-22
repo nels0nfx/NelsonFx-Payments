@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard - NelsonFx</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+    .dashboard-box {
+      max-width: 600px;
+      margin: auto;
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffcc44;
+    }
+    h2 {
+      color: #00ffcc;
+    }
+    button {
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .info {
+      margin: 20px 0;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-box">
+    <h2>User Dashboard</h2>
+    <div class="info">
+      <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
+      <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+      <p><strong>Subscription:</strong> <span id="userSub">0 months</span></p>
+      <p><strong>Status:</strong> <span id="userStatus">Inactive</span></p>
+    </div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const userEmail = sessionStorage.getItem("nelsonfx_current_user");
+    if (!userEmail) {
+      alert("You are not logged in.");
+      window.location.href = "login.html";
+    } else {
+      const user = JSON.parse(localStorage.getItem("nelsonfx_user_" + userEmail));
+      document.getElementById("userName").textContent = user.name;
+      document.getElementById("userEmail").textContent = user.email;
+      document.getElementById("userSub").textContent = user.subscription + " months";
+
+      const status = user.subscription > 0 ? "Active" : "Inactive";
+      document.getElementById("userStatus").textContent = status;
+    }
+
+    function logout() {
+      sessionStorage.removeItem("nelsonfx_current_user");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
