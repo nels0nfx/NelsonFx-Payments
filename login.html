@@ -52,10 +52,10 @@
   </div>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
       authDomain: "nelsonfx-d023e.firebaseapp.com",
@@ -65,25 +65,23 @@
       appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        // Save session
-        sessionStorage.setItem("nelsonfx_user_id", user.uid);
-        window.location.href = "user-dashboard.html";
-
-      } catch (error) {
-        alert("Login failed: " + error.message);
-      }
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          sessionStorage.setItem("nelsonfx_user_id", user.uid);
+          window.location.href = "user-dashboard.html";
+        })
+        .catch((error) => {
+          alert("Login failed: " + error.message);
+        });
     });
   </script>
 
