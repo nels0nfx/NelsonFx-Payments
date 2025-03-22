@@ -62,12 +62,12 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
       authDomain: "nelsonfx-d023e.firebaseapp.com",
@@ -77,9 +77,9 @@
       appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
     const uid = sessionStorage.getItem("nelsonfx_user_id");
 
@@ -88,18 +88,24 @@
       window.location.href = "login.html";
     }
 
-    async function loadUser() {
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
+    function logout() {
+      auth.signOut();
+      sessionStorage.removeItem("nelsonfx_user_id");
+      window.location.href = "login.html";
+    }
 
-      if (docSnap.exists()) {
+    async function loadUser() {
+      const docRef = db.collection("users").doc(uid);
+      const docSnap = await docRef.get();
+
+      if (docSnap.exists) {
         const user = docSnap.data();
         document.getElementById("userName").textContent = user.name;
         document.getElementById("userEmail").textContent = user.email;
         document.getElementById("userSub").textContent = user.subscription + " months";
 
         const startDate = new Date(user.registeredAt);
-        const months = user.subscription;
+        const months = user.subscription || 0;
         const endDate = new Date(startDate);
         endDate.setMonth(endDate.getMonth() + months);
 
@@ -115,17 +121,11 @@
           document.getElementById("userStatus").textContent = "Expired";
         }
       } else {
-        alert("User not found.");
+        alert("User record not found.");
       }
     }
 
     loadUser();
-
-    function logout() {
-      signOut(auth);
-      sessionStorage.removeItem("nelsonfx_user_id");
-      window.location.href = "login.html";
-    }
   </script>
 
 </body>
