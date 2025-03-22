@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel - NelsonFx</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f2027;
+      color: #fff;
+      padding: 30px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      max-width: 1000px;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: #1f1f1f;
+      border: 1px solid #00ffcc33;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #00ffcc22;
+    }
+
+    th {
+      background-color: #00ffcc22;
+      color: #00ffcc;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 4px;
+      border-radius: 4px;
+      border: none;
+    }
+
+    button {
+      padding: 6px 10px;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    h2 {
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Admin Panel - Manage Users</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Subscription</th>
+        <th>Status</th>
+        <th>Update</th>
+      </tr>
+    </thead>
+    <tbody id="userTable"></tbody>
+  </table>
+
+  <div class="footer">
+    &copy; 2025 NelsonFx Admin System
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadUsers() {
+      const userTable = document.getElementById("userTable");
+      userTable.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "users"));
+
+      querySnapshot.forEach((docSnap) => {
+        const user = docSnap.data();
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>
+            <input type="number" id="sub-${docSnap.id}" value="${user.subscription}" min="0" />
+          </td>
+          <td>${user.subscription > 0 ? "Active" : "Expired"}</td>
+          <td>
+            <button onclick="updateSub('${docSnap.id}')">Update</button>
+          </td>
+        `;
+        userTable.appendChild(row);
+      });
+    }
+
+    window.updateSub = async function (userId) {
+      const input = document.getElementById("sub-" + userId);
+      const newSub = parseInt(input.value);
+
+      if (!isNaN(newSub)) {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, { subscription: newSub });
+        alert("Subscription updated!");
+        loadUsers();
+      }
+    };
+
+    loadUsers();
+  </script>
+</body>
+</html>
