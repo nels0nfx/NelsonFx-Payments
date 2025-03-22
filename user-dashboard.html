@@ -55,8 +55,6 @@
       border-radius: 10px; margin-top: 10px;
     }
     .top-bar { text-align: right; }
-
-    /* Toast */
     .toast {
       position: fixed; top: 20px; right: 20px;
       background: #00ffcc; color: #000;
@@ -65,8 +63,6 @@
       font-weight: bold; display: none;
       z-index: 999;
     }
-
-    /* Progress Bar */
     .progress-container {
       background: #333; border-radius: 20px;
       height: 20px; margin: 10px 0;
@@ -76,8 +72,6 @@
       background: #00ffcc; width: 0%;
       transition: width 0.4s ease-in-out;
     }
-
-    /* Alert Box */
     .alert {
       background: #000;
       border-left: 6px solid #00ffcc;
@@ -87,24 +81,30 @@
       margin: 10px 0;
       border-radius: 6px;
     }
+    .badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 15px;
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      border-radius: 20px;
+    }
   </style>
 </head>
 <body>
-
 <div class="toast" id="toast">Updated Successfully!</div>
-
 <div class="container">
-
   <div class="top-bar">
     <button onclick="logout()">Logout</button>
   </div>
-
   <div class="section" style="text-align: center;">
     <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
+    <input type="file" id="uploadPic" accept="image/*" onchange="uploadProfileImage()" />
     <h2>Welcome to Your Dashboard</h2>
+    <div id="badgeDisplay" class="badge">Level 1</div>
   </div>
-
-  <div class="section info">
+    <div class="section info">
     <h3>Account Info</h3>
     <p><span>Name:</span> <span id="userName">Loading...</span></p>
     <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
@@ -138,97 +138,114 @@
     <h3>Live Forex Prices</h3>
     <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" allowfullscreen></iframe>
   </div>
-
 </div>
 
-<!-- Firebase SDK -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
-    authDomain: "nelsonfx-d023e.firebaseapp.com",
-    projectId: "nelsonfx-d023e",
-    storageBucket: "nelsonfx-d023e.firebasestorage.app",
-    messagingSenderId: "214577890152",
-    appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+  authDomain: "nelsonfx-d023e.firebaseapp.com",
+  projectId: "nelsonfx-d023e",
+  storageBucket: "nelsonfx-d023e.appspot.com",
+  messagingSenderId: "214577890152",
+  appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+};
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  const uid = sessionStorage.getItem("nelsonfx_user_id");
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+const uid = sessionStorage.getItem("nelsonfx_user_id");
 
-  if (!uid) {
-    alert("You are not logged in.");
-    window.location.href = "login.html";
+if (!uid) {
+  alert("Access denied. Please login.");
+  window.location.href = "login.html";
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
+}
+
+async function loadUser() {
+  const docRef = db.collection("users").doc(uid);
+  const docSnap = await docRef.get();
+  if (docSnap.exists) {
+    const user = docSnap.data();
+    const { name, email, subscription, profile, registeredAt, xp = 0 } = user;
+    const regDate = new Date(registeredAt);
+    const today = new Date();
+    const endDate = new Date(regDate);
+    endDate.setMonth(endDate.getMonth() + (subscription || 0));
+    const remaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+    const totalDays = subscription * 30;
+    const usedDays = totalDays - remaining;
+    const percent = Math.floor((usedDays / totalDays) * 100);
+
+    const level = Math.floor(xp / 100);
+    document.getElementById("badgeDisplay").textContent = "Level " + level;
+
+    document.getElementById("userName").textContent = name;
+    document.getElementById("userEmail").textContent = email;
+    document.getElementById("userSub").textContent = subscription + " months";
+    document.getElementById("editName").value = name;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("profileImg").src = profile || "";
+    document.getElementById("profileSelect").value = profile || "";
+    document.getElementById("userStatus").textContent = remaining > 0 ? "Active" : "Expired";
+    document.getElementById("expiresOn").textContent = endDate.toDateString();
+    document.getElementById("daysLeft").textContent = remaining > 0 ? remaining + " days left" : "Expired";
+    document.getElementById("progressBar").style.width = percent + "%";
   }
+}
 
-  function showToast(msg) {
-    const toast = document.getElementById("toast");
-    toast.textContent = msg;
-    toast.style.display = "block";
-    setTimeout(() => toast.style.display = "none", 3000);
-  }
+async function updateProfile() {
+  const newName = document.getElementById("editName").value.trim();
+  const newEmail = document.getElementById("editEmail").value.trim();
+  const newProfile = document.getElementById("profileSelect").value;
 
-  async function loadUser() {
-    const docRef = db.collection("users").doc(uid);
-    const docSnap = await docRef.get();
+  if (!newName || !newEmail) return alert("Please enter name & email");
 
-    if (docSnap.exists) {
-      const user = docSnap.data();
-      const name = user.name || "";
-      const email = user.email || "";
-      const sub = user.subscription || 0;
-      const regDate = new Date(user.registeredAt);
-      const today = new Date();
-      const endDate = new Date(regDate);
-      endDate.setMonth(endDate.getMonth() + sub);
-      const remaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-      const totalDays = sub * 30;
-      const usedDays = totalDays - remaining;
-      const percent = Math.max(0, Math.min(100, Math.floor((usedDays / totalDays) * 100)));
+  await db.collection("users").doc(uid).update({
+    name: newName, email: newEmail, profile: newProfile
+  });
 
-      document.getElementById("userName").textContent = name;
-      document.getElementById("userEmail").textContent = email;
-      document.getElementById("userSub").textContent = sub + " months";
-      document.getElementById("editName").value = name;
-      document.getElementById("editEmail").value = email;
-      document.getElementById("profileImg").src = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
-      document.getElementById("profileSelect").value = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
-      document.getElementById("userStatus").textContent = remaining > 0 ? "Active" : "Expired";
-      document.getElementById("expiresOn").textContent = endDate.toDateString();
-      document.getElementById("daysLeft").textContent = remaining > 0 ? remaining + " days left" : "Expired";
-      document.getElementById("progressBar").style.width = percent + "%";
-    }
-  }
+  document.getElementById("userName").textContent = newName;
+  document.getElementById("userEmail").textContent = newEmail;
+  document.getElementById("profileImg").src = newProfile;
+  showToast("Profile updated!");
+}
 
-  async function updateProfile() {
-    const newName = document.getElementById("editName").value.trim();
-    const newEmail = document.getElementById("editEmail").value.trim();
-    const newProfile = document.getElementById("profileSelect").value;
-    if (!newName || !newEmail) return alert("Enter name and email");
+async function uploadProfileImage() {
+  const file = document.getElementById("uploadPic").files[0];
+  if (!file) return alert("Please choose a file");
 
-    await db.collection("users").doc(uid).update({
-      name: newName, email: newEmail, profile: newProfile
-    });
+  const ref = storage.ref().child(`profiles/${uid}_${file.name}`);
+  await ref.put(file);
+  const url = await ref.getDownloadURL();
 
-    document.getElementById("userName").textContent = newName;
-    document.getElementById("userEmail").textContent = newEmail;
-    document.getElementById("profileImg").src = newProfile;
-    showToast("Profile updated!");
-  }
+  await db.collection("users").doc(uid).update({
+    profile: url
+  });
 
-  function logout() {
-    auth.signOut();
-    sessionStorage.removeItem("nelsonfx_user_id");
-    window.location.href = "login.html";
-  }
+  document.getElementById("profileImg").src = url;
+  showToast("Profile picture updated!");
+}
 
-  loadUser();
+function logout() {
+  auth.signOut();
+  sessionStorage.removeItem("nelsonfx_user_id");
+  window.location.href = "login.html";
+}
+
+loadUser();
 </script>
-
 </body>
 </html>
