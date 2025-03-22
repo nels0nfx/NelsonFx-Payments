@@ -14,7 +14,7 @@
     }
 
     .dashboard-box {
-      max-width: 700px;
+      max-width: 800px;
       margin: auto;
       background: #1f1f1f;
       padding: 30px;
@@ -46,14 +46,7 @@
       font-weight: bold;
     }
 
-    .edit-section {
-      margin-top: 30px;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
-    input {
+    input, select {
       padding: 10px;
       margin: 8px 0;
       width: 90%;
@@ -61,9 +54,24 @@
       border: none;
     }
 
+    .edit-section {
+      margin-top: 30px;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin: 10px auto;
+      border: 3px solid #00ffcc;
+    }
+
     iframe {
       border: none;
-      margin-top: 30px;
+      margin-top: 20px;
       width: 100%;
       height: 400px;
       border-radius: 10px;
@@ -74,6 +82,8 @@
 
   <div class="dashboard-box">
     <h2>User Dashboard</h2>
+
+    <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
 
     <div class="info">
       <p><span>Name:</span> <span id="userName">Loading...</span></p>
@@ -88,13 +98,22 @@
       <h3>Edit Profile</h3>
       <input type="text" id="editName" placeholder="New Name" /><br>
       <input type="email" id="editEmail" placeholder="New Email" /><br>
+      <select id="profileSelect">
+        <option value="https://i.imgur.com/1Q9Z1Zm.png">Male 1</option>
+        <option value="https://i.imgur.com/1z0fPbn.png">Female 1</option>
+        <option value="https://i.imgur.com/v6d5Woz.png">Male 2</option>
+        <option value="https://i.imgur.com/kKnNmnE.png">Female 2</option>
+      </select><br>
       <button onclick="updateProfile()">Update Profile</button>
     </div>
 
     <button onclick="logout()">Logout</button>
 
-    <h3 style="margin-top: 40px;">Live Forex Pairs Chart</h3>
-    <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_12345&amp;symbol=FX:EURUSD&amp;interval=30&amp;hidesidetoolbar=1&amp;symboledit=1&amp;saveimage=1&amp;toolbarbg=F1F3F6&amp;studies=[]&amp;theme=dark&amp;style=1&amp;timezone=Africa/Lagos&amp;withdateranges=1&amp;hideideas=1" allowfullscreen></iframe>
+    <h3 style="margin-top: 40px;">Live Forex Pairs</h3>
+
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:EURUSD&interval=30&theme=dark" allowfullscreen></iframe>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:GBPUSD&interval=30&theme=dark" allowfullscreen></iframe>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:USDJPY&interval=30&theme=dark" allowfullscreen></iframe>
   </div>
 
   <!-- Firebase SDK -->
@@ -117,7 +136,6 @@
     const db = firebase.firestore();
 
     const uid = sessionStorage.getItem("nelsonfx_user_id");
-
     if (!uid) {
       alert("You are not logged in.");
       window.location.href = "login.html";
@@ -134,49 +152,47 @@
         document.getElementById("userSub").textContent = user.subscription + " months";
         document.getElementById("editName").value = user.name;
         document.getElementById("editEmail").value = user.email;
+        document.getElementById("profileImg").src = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
+        document.getElementById("profileSelect").value = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
 
         const startDate = new Date(user.registeredAt);
-        const months = user.subscription || 0;
         const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + months);
-
+        endDate.setMonth(endDate.getMonth() + (user.subscription || 0));
         const today = new Date();
-        const diffTime = endDate - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        const formattedEnd = endDate.toLocaleDateString("en-GB", {
-          year: "numeric", month: "long", day: "numeric"
-        });
-        document.getElementById("expiresOn").textContent = formattedEnd;
+        const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
 
         document.getElementById("daysLeft").textContent = diffDays > 0 ? diffDays + " days" : "0 days";
         document.getElementById("userStatus").textContent = diffDays > 0 ? "Active" : "Expired";
-      } else {
-        alert("User not found.");
+        document.getElementById("expiresOn").textContent = endDate.toLocaleDateString("en-GB", {
+          year: "numeric", month: "long", day: "numeric"
+        });
       }
     }
 
     async function updateProfile() {
       const newName = document.getElementById("editName").value.trim();
       const newEmail = document.getElementById("editEmail").value.trim();
+      const newProfile = document.getElementById("profileSelect").value;
 
       if (!newName || !newEmail) {
-        alert("Please enter both name and email.");
+        alert("Please enter name and email.");
         return;
       }
 
       try {
         await db.collection("users").doc(uid).update({
           name: newName,
-          email: newEmail
+          email: newEmail,
+          profile: newProfile
         });
 
         document.getElementById("userName").textContent = newName;
         document.getElementById("userEmail").textContent = newEmail;
+        document.getElementById("profileImg").src = newProfile;
 
-        alert("Profile updated successfully!");
+        alert("Profile updated!");
       } catch (error) {
-        alert("Error updating profile: " + error.message);
+        alert("Update failed: " + error.message);
       }
     }
 
