@@ -2,66 +2,167 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - NelsonFx Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - NelsonFx</title>
   <style>
     body {
-      background-color: #0f2027;
-      color: #fff;
       font-family: Arial, sans-serif;
+      background: #0f2027;
+      color: #fff;
+      padding: 30px;
       text-align: center;
-      padding: 50px;
     }
-    .login-box {
-      max-width: 400px;
+
+    .login-box, .dashboard-box {
+      max-width: 1000px;
       margin: auto;
       background: #1f1f1f;
       padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px #00ffcc33;
+      box-shadow: 0 0 10px #00ffcc44;
     }
-    input {
-      width: 90%;
-      padding: 12px;
-      margin: 15px 0;
+
+    input[type="password"], input[type="number"] {
+      padding: 10px;
+      width: 250px;
+      margin: 10px 0;
       border: none;
       border-radius: 6px;
       font-size: 16px;
     }
+
     button {
+      padding: 10px 20px;
       background: #00ffcc;
       color: #000;
       border: none;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-weight: bold;
       border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #00ffcc33;
+    }
+
+    th {
+      background-color: #00ffcc22;
+      color: #00ffcc;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
 
-  <div class="login-box">
+  <!-- Admin Login -->
+  <div class="login-box" id="loginBox">
     <h2>Admin Login</h2>
     <input type="password" id="adminPass" placeholder="Enter Admin Password">
-    <button onclick="checkLogin()">Login</button>
+    <br>
+    <button onclick="checkAdmin()">Login</button>
   </div>
 
-  <script>
-    // Check for session and auto-redirect if already logged in
-    if (sessionStorage.getItem("isAdmin") === "true") {
-      window.location.href = "dashboard.html";
+  <!-- Admin Dashboard -->
+  <div class="dashboard-box" id="dashboardBox" style="display: none;">
+    <h2>Welcome, Admin - Manage Users</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Subscription</th>
+          <th>Status</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+
+    <div class="footer">
+      &copy; 2025 NelsonFx Admin Panel
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Check Admin Login
+    window.checkAdmin = function () {
+      const inputPass = document.getElementById("adminPass").value;
+      if (inputPass === "2468Abcd.") {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("dashboardBox").style.display = "block";
+        loadUsers();
+      } else {
+        alert("Incorrect password.");
+      }
+    };
+
+    // Load All Users
+    async function loadUsers() {
+      const userTable = document.getElementById("userTable");
+      userTable.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "users"));
+
+      querySnapshot.forEach((docSnap) => {
+        const user = docSnap.data();
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>
+            <input type="number" id="sub-${docSnap.id}" value="${user.subscription}" min="0" />
+          </td>
+          <td>${user.subscription > 0 ? "Active" : "Expired"}</td>
+          <td>
+            <button onclick="updateSub('${docSnap.id}')">Update</button>
+          </td>
+        `;
+        userTable.appendChild(row);
+      });
     }
 
-    function checkLogin() {
-      const password = document.getElementById("adminPass").value;
-      if (password === "2468Abcd.") {
-        sessionStorage.setItem("isAdmin", "true");
-        window.location.href = "dashboard.html";
-      } else {
-        alert("Incorrect password");
+    // Update Subscription
+    window.updateSub = async function (userId) {
+      const input = document.getElementById("sub-" + userId);
+      const newSub = parseInt(input.value);
+
+      if (!isNaN(newSub)) {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, { subscription: newSub });
+        alert("Subscription updated!");
+        loadUsers();
       }
-    }
+    };
   </script>
 
 </body>
