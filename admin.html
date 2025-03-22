@@ -3,62 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - NelsonFx</title>
+    <title>Admin Login - NelsonFx</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #fff;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #1e1e1e;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-        }
-        h1 {
-            color: #ffcc00;
-        }
-        a {
-            color: #ffcc00;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        iframe {
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 5px;
-        }
+        body { background-color: black; color: white; text-align: center; font-family: Arial, sans-serif; }
+        input { padding: 10px; margin: 10px; width: 80%; }
+        button { padding: 10px 20px; background: green; color: white; border: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to NelsonFx Admin Panel</h1>
-        <p>Manage your payments, users, and messages.</p>
 
-        <!-- Button to Open Chat Management Page -->
-        <a href="admin_chat.html" target="_blank">🔹 Open Chat Management</a>
-    </div>
+    <h2>Admin Panel Login</h2>
+    <input type="password" id="password" placeholder="Enter Admin Password">
+    <button onclick="checkLogin()">Login</button>
 
-    <!-- Start of Tawk.to Script (Live Chat) -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function () {
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/67ddef5de9ba40190d65c7c6/1imteu2h5';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
+    <script>
+        function checkLogin() {
+            var password = document.getElementById('password').value;
+            if (password === "2468Abcd.") {
+                window.location.href = "admin_chat.html";
+            } else {
+                alert("Incorrect Password!");
+            }
+        }
     </script>
-    <!-- End of Tawk.to Script -->
+
 </body>
 </html>
