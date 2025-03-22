@@ -13,16 +13,14 @@
       padding: 30px;
     }
     .admin-container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
       background: #1f1f1f;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px #00ffcc44;
     }
-    h1, h2 {
-      color: #00ffcc;
-    }
+    h1, h2 { color: #00ffcc; }
     button {
       background: #00ffcc;
       color: #000;
@@ -33,9 +31,7 @@
       cursor: pointer;
       margin: 5px;
     }
-    .menu button {
-      margin: 5px;
-    }
+    .menu button { margin: 5px; }
     .section {
       display: none;
       margin-top: 30px;
@@ -43,21 +39,9 @@
       padding: 20px;
       border-radius: 10px;
     }
-    .toast {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #00ffcc;
-      color: #000;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 6px;
-      display: none;
-      z-index: 999;
-    }
     input, select {
       padding: 10px;
-      width: 80%;
+      width: 90%;
       margin: 8px 0;
       border-radius: 5px;
       border: none;
@@ -75,20 +59,31 @@
       background: #00ffcc;
       color: #000;
     }
+    #toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00ffcc;
+      color: #000;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      display: none;
+      z-index: 999;
+    }
   </style>
 </head>
 <body>
 
-<div class="toast" id="toast">Toast</div>
-
 <div class="admin-container" id="loginSection">
   <h1>Admin Login</h1>
-  <input type="password" id="adminPass" placeholder="Enter Admin Password" />
-  <button onclick="checkAdmin()">Enter</button>
+  <input type="email" id="adminEmail" placeholder="Admin Email" />
+  <input type="password" id="adminPassword" placeholder="Admin Password" />
+  <button onclick="loginAdmin()">Login</button>
 </div>
 
 <div class="admin-container" id="mainPanel" style="display: none;">
-  <h1>Admin Panel - NelsonFx</h1>
+  <h1>Welcome, Admin</h1>
   <button onclick="logout()">Logout</button>
 
   <div class="menu">
@@ -96,209 +91,321 @@
     <button onclick="showSection('users')">Manage Users</button>
     <button onclick="showSection('reset')">Reset Password</button>
     <button onclick="showSection('settings')">Settings</button>
+    <button onclick="showSection('proofs')">Approve Payments</button>
+    <button onclick="showSection('broadcast')">Send Email</button>
+    <button onclick="showSection('chat')">Chat Inbox</button>
+    <button onclick="showSection('logs')">Activity Logs</button>
   </div>
 
   <div id="dashboard" class="section">
-    <h2>Dashboard Analytics</h2>
+    <h2>Analytics Overview</h2>
+    <canvas id="analyticsChart" width="100%" height="300"></canvas>
     <p><strong>Total Users:</strong> <span id="totalUsers">0</span></p>
     <p><strong>Active Subscriptions:</strong> <span id="activeSubs">0</span></p>
   </div>
 
-    <div id="users" class="section">
+  <div id="users" class="section">
     <h2>Manage Users</h2>
-    <input type="text" id="searchUser" oninput="filterUsers()" placeholder="Search by name or email..." />
+    <input type="text" id="searchUser" oninput="filterUsers()" placeholder="Search user..." />
     <div id="userTable">Loading...</div>
   </div>
 
   <div id="reset" class="section">
     <h2>Reset User Password</h2>
-    <input type="email" id="resetEmail" placeholder="User email" />
+    <input type="email" id="resetEmail" placeholder="Enter user email" />
     <button onclick="resetUserPassword()">Send Reset Link</button>
   </div>
 
   <div id="settings" class="section">
-    <h2>Admin Settings</h2>
-    <p><strong>Theme:</strong> <button onclick="toggleTheme()">Toggle</button></p>
-    <p><strong>Maintenance Mode:</strong> <button onclick="toggleMaintenance()">Toggle</button></p>
-    <p><strong>Email Alerts:</strong> <button onclick="toggleAlerts()">Toggle</button></p>
-    <p><strong>Export Users:</strong> <button onclick="exportCSV()">Export CSV</button></p>
+    <h2>Settings</h2>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+    <button onclick="toggleMaintenance()">Toggle Maintenance</button>
+    <button onclick="toggleAlerts()">Toggle Alerts</button>
+    <button onclick="exportCSV()">Export CSV</button>
+  </div>
+
+  <div id="proofs" class="section">
+    <h2>Approve Proof of Payment</h2>
+    <div id="proofList">Loading uploads...</div>
+  </div>
+
+  <div id="broadcast" class="section">
+    <h2>Email Broadcast</h2>
+    <textarea id="emailMsg" rows="5" placeholder="Type your message here..." style="width: 90%"></textarea>
+    <button onclick="sendBroadcast()">Send to All Users</button>
+  </div>
+
+  <div id="chat" class="section">
+    <h2>Live Chat Inbox</h2>
+    <iframe src="https://tawk.to/chat/67ddef5de9ba40190d65c7c6/1imteu2h5" width="100%" height="500" frameborder="0"></iframe>
+  </div>
+
+  <div id="logs" class="section">
+    <h2>Admin Activity Logs</h2>
+    <div id="logList">Loading logs...</div>
   </div>
 </div>
 
-<!-- Firebase SDKs -->
+<div id="toast"></div>
+
+  <!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
-    authDomain: "nelsonfx-d023e.firebaseapp.com",
-    projectId: "nelsonfx-d023e",
-    storageBucket: "nelsonfx-d023e.appspot.com",
-    messagingSenderId: "214577890152",
-    appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+  authDomain: "nelsonfx-d023e.firebaseapp.com",
+  projectId: "nelsonfx-d023e",
+  storageBucket: "nelsonfx-d023e.appspot.com",
+  messagingSenderId: "214577890152",
+  appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+};
 
-  const ADMIN_PASSWORD = "2468Abcd";
-  let allUsers = [];
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+let allUsers = [];
 
-  function showToast(msg) {
-    const toast = document.getElementById("toast");
-    toast.textContent = msg;
-    toast.style.display = "block";
-    setTimeout(() => toast.style.display = "none", 3000);
-  }
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 3000);
+}
 
-  function checkAdmin() {
-    const entered = document.getElementById("adminPass").value;
-    if (entered === ADMIN_PASSWORD) {
-      document.getElementById("loginSection").style.display = "none";
-      document.getElementById("mainPanel").style.display = "block";
-      loadDashboard();
-    } else {
-      showToast("Wrong password");
+function loginAdmin() {
+  const email = document.getElementById("adminEmail").value;
+  const pass = document.getElementById("adminPassword").value;
+  db.collection("admins").doc(email).get().then(doc => {
+    if (!doc.exists || doc.data().password !== pass) {
+      return showToast("Invalid credentials");
     }
-  }
+    document.getElementById("loginSection").style.display = "none";
+    document.getElementById("mainPanel").style.display = "block";
+    logActivity(email, "Logged in");
+    loadDashboard();
+  });
+}
 
-  function showSection(id) {
-    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
-    document.getElementById(id).style.display = "block";
-    if (id === 'users') loadUsers();
-  }
+function logActivity(email, action) {
+  db.collection("adminLogs").add({
+    admin: email,
+    action,
+    timestamp: new Date().toISOString()
+  });
+}
 
-  function logout() {
-    location.reload();
-  }
+function loadDashboard() {
+  db.collection("users").get().then(snapshot => {
+    let total = 0, active = 0, labels = [], values = [];
+    const today = new Date();
+    const monthMap = {};
 
-  function loadDashboard() {
-    db.collection("users").get().then(snapshot => {
-      let total = 0, active = 0;
-      snapshot.forEach(doc => {
-        const u = doc.data();
-        total++;
-        const reg = new Date(u.registeredAt);
-        const end = new Date(reg);
-        end.setMonth(end.getMonth() + (u.subscription || 0));
-        if (end > new Date()) active++;
-      });
-      document.getElementById("totalUsers").textContent = total;
-      document.getElementById("activeSubs").textContent = active;
+    snapshot.forEach(doc => {
+      const u = doc.data();
+      total++;
+      const reg = new Date(u.registeredAt);
+      const end = new Date(reg);
+      end.setMonth(end.getMonth() + (u.subscription || 0));
+      if (end > today) active++;
+
+      const month = reg.toLocaleString('default', { month: 'short' });
+      monthMap[month] = (monthMap[month] || 0) + 1;
     });
-  }
 
+    Object.keys(monthMap).forEach(m => {
+      labels.push(m);
+      values.push(monthMap[m]);
+    });
+
+    document.getElementById("totalUsers").textContent = total;
+    document.getElementById("activeSubs").textContent = active;
+    renderChart(labels, values);
+  });
+}
+
+function renderChart(labels, values) {
+  new Chart(document.getElementById('analyticsChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: "New Users",
+        data: values,
+        borderColor: "#00ffcc",
+        backgroundColor: "#00ffcc44",
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+function logout() {
+  location.reload();
+}
+
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+  document.getElementById(id).style.display = "block";
+  if (id === "users") loadUsers();
+  if (id === "proofs") loadProofs();
+  if (id === "logs") loadLogs();
+}
+  
   function loadUsers() {
-    db.collection("users").get().then(snapshot => {
-      allUsers = [];
-      snapshot.forEach(doc => {
-        allUsers.push({ id: doc.id, ...doc.data() });
-      });
-      displayUsers(allUsers);
+  db.collection("users").get().then(snapshot => {
+    allUsers = [];
+    snapshot.forEach(doc => {
+      allUsers.push({ id: doc.id, ...doc.data() });
     });
-  }
+    displayUsers(allUsers);
+  });
+}
 
-  function displayUsers(users) {
-    let html = `<table><tr><th>Name</th><th>Email</th><th>Sub</th><th>Status</th><th>Actions</th></tr>`;
-    users.forEach(user => {
-      html += `<tr>
-        <td>${user.name || ""}</td>
-        <td>${user.email || ""}</td>
-        <td>${user.subscription || 0}</td>
-        <td>${user.banned ? "Banned" : "Active"}</td>
-        <td>
-          <button onclick="editUser('${user.id}')">Edit</button>
-          <button onclick="deleteUser('${user.id}')">Delete</button>
-          <button onclick="banUser('${user.id}')">${user.banned ? "Unban" : "Ban"}</button>
-        </td>
-      </tr>`;
-    });
-    html += `</table>`;
-    document.getElementById("userTable").innerHTML = html;
-  }
+function displayUsers(users) {
+  let html = `<table><tr><th>Name</th><th>Email</th><th>Sub</th><th>Status</th><th>Actions</th></tr>`;
+  users.forEach(user => {
+    html += `<tr>
+      <td>${user.name || ""}</td>
+      <td>${user.email || ""}</td>
+      <td>${user.subscription || 0}</td>
+      <td>${user.banned ? "Banned" : "Active"}</td>
+      <td>
+        <button onclick="editUser('${user.id}')">Edit</button>
+        <button onclick="deleteUser('${user.id}')">Delete</button>
+        <button onclick="banUser('${user.id}')">${user.banned ? "Unban" : "Ban"}</button>
+      </td>
+    </tr>`;
+  });
+  html += `</table>`;
+  document.getElementById("userTable").innerHTML = html;
+}
 
-  function filterUsers() {
-    const q = document.getElementById("searchUser").value.toLowerCase();
-    const filtered = allUsers.filter(u =>
-      (u.name && u.name.toLowerCase().includes(q)) ||
-      (u.email && u.email.toLowerCase().includes(q))
-    );
-    displayUsers(filtered);
-  }
-
-  function editUser(id) {
-    const newSub = prompt("New subscription months:");
-    if (newSub !== null && !isNaN(newSub)) {
-      db.collection("users").doc(id).update({ subscription: parseInt(newSub) }).then(() => {
-        showToast("Updated");
-        loadUsers();
-      });
-    }
-  }
-
-  function deleteUser(id) {
-    if (confirm("Delete this user?")) {
-      db.collection("users").doc(id).delete().then(() => {
-        showToast("Deleted");
-        loadUsers();
-      });
-    }
-  }
-
-  function banUser(id) {
-    const u = allUsers.find(x => x.id === id);
-    const banned = !u.banned;
-    db.collection("users").doc(id).update({ banned }).then(() => {
-      showToast(banned ? "User Banned" : "User Unbanned");
+function editUser(id) {
+  const newSub = prompt("New subscription months:");
+  if (newSub && !isNaN(newSub)) {
+    db.collection("users").doc(id).update({ subscription: parseInt(newSub) })
+    .then(() => {
+      showToast("Updated");
       loadUsers();
     });
   }
+}
 
-  function resetUserPassword() {
-    const email = document.getElementById("resetEmail").value;
-    if (!email) return showToast("Enter email");
-    auth.sendPasswordResetEmail(email)
-      .then(() => showToast("Reset link sent"))
-      .catch(err => showToast(err.message));
-  }
-
-  function exportCSV() {
-    if (allUsers.length === 0) return showToast("No users");
-    let csv = "Name,Email,Subscription\n";
-    allUsers.forEach(u => {
-      csv += `${u.name || ""},${u.email || ""},${u.subscription || 0}\n`;
-    });
-    const blob = new Blob([csv], { type: "text/csv" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "users.csv";
-    a.click();
-  }
-
-  function toggleTheme() {
-    document.body.classList.toggle("light");
-    showToast("Theme toggled");
-  }
-
-  function toggleMaintenance() {
-    const ref = db.collection("admin").doc("settings");
-    ref.get().then(doc => {
-      const current = doc.exists && doc.data().maintenance;
-      ref.set({ maintenance: !current }, { merge: true });
-      showToast("Maintenance " + (!current ? "enabled" : "disabled"));
+function deleteUser(id) {
+  if (confirm("Delete this user?")) {
+    db.collection("users").doc(id).delete().then(() => {
+      showToast("Deleted");
+      loadUsers();
     });
   }
+}
 
-  function toggleAlerts() {
-    const ref = db.collection("admin").doc("settings");
-    ref.get().then(doc => {
-      const current = doc.exists && doc.data().emailAlerts;
-      ref.set({ emailAlerts: !current }, { merge: true });
-      showToast("Email alerts " + (!current ? "enabled" : "disabled"));
+function banUser(id) {
+  const user = allUsers.find(u => u.id === id);
+  const banned = !user.banned;
+  db.collection("users").doc(id).update({ banned }).then(() => {
+    showToast(banned ? "Banned" : "Unbanned");
+    loadUsers();
+  });
+}
+
+function resetUserPassword() {
+  const email = document.getElementById("resetEmail").value;
+  if (!email) return showToast("Enter email");
+  auth.sendPasswordResetEmail(email)
+    .then(() => showToast("Reset link sent"))
+    .catch(err => showToast(err.message));
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("light");
+  showToast("Theme toggled");
+}
+
+function toggleMaintenance() {
+  const ref = db.collection("admin").doc("settings");
+  ref.get().then(doc => {
+    const current = doc.exists && doc.data().maintenance;
+    ref.set({ maintenance: !current }, { merge: true });
+    showToast("Maintenance " + (!current ? "enabled" : "disabled"));
+  });
+}
+
+function toggleAlerts() {
+  const ref = db.collection("admin").doc("settings");
+  ref.get().then(doc => {
+    const current = doc.exists && doc.data().emailAlerts;
+    ref.set({ emailAlerts: !current }, { merge: true });
+    showToast("Alerts " + (!current ? "enabled" : "disabled"));
+  });
+}
+
+function exportCSV() {
+  if (!allUsers.length) return showToast("No users");
+  let csv = "Name,Email,Subscription\n";
+  allUsers.forEach(u => {
+    csv += `${u.name || ""},${u.email || ""},${u.subscription || 0}\n`;
+  });
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "users.csv";
+  a.click();
+}
+
+function loadProofs() {
+  db.collection("uploads").get().then(snapshot => {
+    let html = `<table><tr><th>Name</th><th>Amount</th><th>Proof</th><th>Action</th></tr>`;
+    snapshot.forEach(doc => {
+      const d = doc.data();
+      html += `<tr>
+        <td>${d.name}</td>
+        <td>₦${d.amount}</td>
+        <td><a href="${d.proof}" target="_blank">View</a></td>
+        <td><button onclick="approveProof('${doc.id}')">Approve</button></td>
+      </tr>`;
     });
-  }
+    html += `</table>`;
+    document.getElementById("proofList").innerHTML = html;
+  });
+}
+
+function approveProof(id) {
+  db.collection("uploads").doc(id).update({ approved: true }).then(() => {
+    showToast("Approved!");
+    loadProofs();
+  });
+}
+
+function sendBroadcast() {
+  const msg = document.getElementById("emailMsg").value;
+  if (!msg) return showToast("Enter message");
+  db.collection("broadcasts").add({
+    message: msg,
+    sentAt: new Date().toISOString()
+  }).then(() => showToast("Sent!"));
+}
+
+function loadLogs() {
+  db.collection("adminLogs").orderBy("timestamp", "desc").limit(50).get().then(snapshot => {
+    let html = `<ul>`;
+    snapshot.forEach(doc => {
+      const l = doc.data();
+      html += `<li><strong>${l.admin}</strong>: ${l.action} <em>${new Date(l.timestamp).toLocaleString()}</em></li>`;
+    });
+    html += `</ul>`;
+    document.getElementById("logList").innerHTML = html;
+  });
+}
 </script>
 </body>
 </html>
