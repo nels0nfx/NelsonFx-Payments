@@ -5,240 +5,230 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NelsonFx | User Dashboard</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       color: #fff;
-      margin: 0;
-      padding: 0;
+      margin: 0; padding: 0;
     }
-
     .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #141414;
-      border-radius: 15px;
+      max-width: 900px; margin: 40px auto; padding: 20px;
+      background: #141414; border-radius: 15px;
       box-shadow: 0 0 25px #00ffcc33;
     }
-
     .section {
-      margin-bottom: 30px;
-      padding: 20px;
-      border-radius: 10px;
-      background: #1f1f1f;
+      margin-bottom: 30px; padding: 20px;
+      border-radius: 10px; background: #1f1f1f;
     }
-
-    h2, h3 {
-      color: #00ffcc;
-      margin-bottom: 15px;
-    }
-
-    p {
-      line-height: 1.6;
-      font-size: 16px;
-    }
-
-    .info p span {
-      font-weight: bold;
-      color: #00ffcc;
-    }
-
+    h2, h3 { color: #00ffcc; margin-bottom: 15px; }
+    p { line-height: 1.6; font-size: 16px; }
+    .info p span { font-weight: bold; color: #00ffcc; }
     input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
+      width: 100%; padding: 12px; margin: 10px 0;
+      font-size: 16px; border-radius: 6px; border: none;
     }
-
     button {
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
-      background: #00ffcc;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
+      padding: 12px 20px; font-size: 16px;
+      font-weight: bold; background: #00ffcc; color: #000;
+      border: none; border-radius: 6px; cursor: pointer;
     }
-
     .profile-pic {
-      display: block;
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      margin: 0 auto 15px;
-      border-radius: 50%;
-      border: 3px solid #00ffcc;
+      display: block; width: 100px; height: 100px;
+      object-fit: cover; margin: 0 auto 15px;
+      border-radius: 50%; border: 3px solid #00ffcc;
     }
-
     .price-widget {
-      margin-top: 30px;
-      padding: 15px;
+      margin-top: 30px; padding: 15px;
       border-radius: 12px;
       background-image: url('https://cdn.pixabay.com/photo/2017/02/01/22/02/grass-2030485_1280.jpg');
-      background-size: cover;
-      background-position: center;
+      background-size: cover; background-position: center;
       box-shadow: 0 0 15px #00ffcc88;
       animation: glow 5s ease-in-out infinite alternate;
     }
-
     @keyframes glow {
       from { box-shadow: 0 0 10px #00ffcc44; }
-      to { box-shadow: 0 0 25px #00ffcccc; }
+      to   { box-shadow: 0 0 25px #00ffcccc; }
     }
-
     iframe {
-      width: 100%;
-      height: 300px;
-      border: none;
-      border-radius: 10px;
-      margin-top: 10px;
+      width: 100%; height: 300px; border: none;
+      border-radius: 10px; margin-top: 10px;
+    }
+    .top-bar { text-align: right; }
+
+    /* Toast */
+    .toast {
+      position: fixed; top: 20px; right: 20px;
+      background: #00ffcc; color: #000;
+      padding: 12px 20px; border-radius: 6px;
+      box-shadow: 0 0 10px #00ffcc66;
+      font-weight: bold; display: none;
+      z-index: 999;
     }
 
-    .top-bar {
-      text-align: right;
+    /* Progress Bar */
+    .progress-container {
+      background: #333; border-radius: 20px;
+      height: 20px; margin: 10px 0;
+    }
+    .progress-bar {
+      height: 100%; border-radius: 20px;
+      background: #00ffcc; width: 0%;
+      transition: width 0.4s ease-in-out;
+    }
+
+    /* Alert Box */
+    .alert {
+      background: #000;
+      border-left: 6px solid #00ffcc;
+      padding: 10px 15px;
+      font-size: 15px;
+      color: #fff;
+      margin: 10px 0;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
+<div class="toast" id="toast">Updated Successfully!</div>
 
-    <div class="top-bar">
-      <button onclick="logout()">Logout</button>
-    </div>
+<div class="container">
 
-    <div class="section" style="text-align: center;">
-      <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
-      <h2>Welcome to Your Dashboard</h2>
-    </div>
-
-    <div class="section info">
-      <h3>Account Info</h3>
-      <p><span>Name:</span> <span id="userName">Loading...</span></p>
-      <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
-      <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
-      <p><span>Status:</span> <span id="userStatus">Checking...</span></p>
-      <p><span>Days Remaining:</span> <span id="daysLeft">Calculating...</span></p>
-      <p><span>Expires On:</span> <span id="expiresOn">-</span></p>
-    </div>
-
-    <div class="section">
-      <h3>Edit Profile</h3>
-      <input type="text" id="editName" placeholder="New Name" />
-      <input type="email" id="editEmail" placeholder="New Email" />
-      <select id="profileSelect">
-        <option value="https://i.imgur.com/1Q9Z1Zm.png">Male 1</option>
-        <option value="https://i.imgur.com/1z0fPbn.png">Female 1</option>
-        <option value="https://i.imgur.com/v6d5Woz.png">Male 2</option>
-        <option value="https://i.imgur.com/kKnNmnE.png">Female 2</option>
-      </select>
-      <button onclick="updateProfile()">Update Profile</button>
-    </div>
-
-    <div class="price-widget">
-      <h3>Live Forex Prices</h3>
-      <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" allowfullscreen></iframe>
-    </div>
-
+  <div class="top-bar">
+    <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <div class="section" style="text-align: center;">
+    <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
+    <h2>Welcome to Your Dashboard</h2>
+  </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
-      authDomain: "nelsonfx-d023e.firebaseapp.com",
-      projectId: "nelsonfx-d023e",
-      storageBucket: "nelsonfx-d023e.firebasestorage.app",
-      messagingSenderId: "214577890152",
-      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
-    };
+  <div class="section info">
+    <h3>Account Info</h3>
+    <p><span>Name:</span> <span id="userName">Loading...</span></p>
+    <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
+    <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
+    <p><span>Status:</span> <span id="userStatus">Checking...</span></p>
+    <p><span>Expires On:</span> <span id="expiresOn">-</span></p>
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const uid = sessionStorage.getItem("nelsonfx_user_id");
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
 
-    if (!uid) {
-      alert("You are not logged in.");
-      window.location.href = "login.html";
+    <div class="alert">
+      Days Remaining: <span id="daysLeft">...</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Edit Profile</h3>
+    <input type="text" id="editName" placeholder="New Name" />
+    <input type="email" id="editEmail" placeholder="New Email" />
+    <select id="profileSelect">
+      <option value="https://i.imgur.com/1Q9Z1Zm.png">Male 1</option>
+      <option value="https://i.imgur.com/1z0fPbn.png">Female 1</option>
+      <option value="https://i.imgur.com/v6d5Woz.png">Male 2</option>
+      <option value="https://i.imgur.com/kKnNmnE.png">Female 2</option>
+    </select>
+    <button onclick="updateProfile()">Update Profile</button>
+  </div>
+
+  <div class="price-widget">
+    <h3>Live Forex Prices</h3>
+    <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" allowfullscreen></iframe>
+  </div>
+
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+    authDomain: "nelsonfx-d023e.firebaseapp.com",
+    projectId: "nelsonfx-d023e",
+    storageBucket: "nelsonfx-d023e.firebasestorage.app",
+    messagingSenderId: "214577890152",
+    appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  const uid = sessionStorage.getItem("nelsonfx_user_id");
+
+  if (!uid) {
+    alert("You are not logged in.");
+    window.location.href = "login.html";
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+  }
+
+  async function loadUser() {
+    const docRef = db.collection("users").doc(uid);
+    const docSnap = await docRef.get();
+
+    if (docSnap.exists) {
+      const user = docSnap.data();
+      const name = user.name || "";
+      const email = user.email || "";
+      const sub = user.subscription || 0;
+      const regDate = new Date(user.registeredAt);
+      const today = new Date();
+      const endDate = new Date(regDate);
+      endDate.setMonth(endDate.getMonth() + sub);
+      const remaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+      const totalDays = sub * 30;
+      const usedDays = totalDays - remaining;
+      const percent = Math.max(0, Math.min(100, Math.floor((usedDays / totalDays) * 100)));
+
+      document.getElementById("userName").textContent = name;
+      document.getElementById("userEmail").textContent = email;
+      document.getElementById("userSub").textContent = sub + " months";
+      document.getElementById("editName").value = name;
+      document.getElementById("editEmail").value = email;
+      document.getElementById("profileImg").src = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
+      document.getElementById("profileSelect").value = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
+      document.getElementById("userStatus").textContent = remaining > 0 ? "Active" : "Expired";
+      document.getElementById("expiresOn").textContent = endDate.toDateString();
+      document.getElementById("daysLeft").textContent = remaining > 0 ? remaining + " days left" : "Expired";
+      document.getElementById("progressBar").style.width = percent + "%";
     }
+  }
 
-    async function loadUser() {
-      const docRef = db.collection("users").doc(uid);
-      const docSnap = await docRef.get();
+  async function updateProfile() {
+    const newName = document.getElementById("editName").value.trim();
+    const newEmail = document.getElementById("editEmail").value.trim();
+    const newProfile = document.getElementById("profileSelect").value;
+    if (!newName || !newEmail) return alert("Enter name and email");
 
-      if (docSnap.exists) {
-        const user = docSnap.data();
-        document.getElementById("userName").textContent = user.name;
-        document.getElementById("userEmail").textContent = user.email;
-        document.getElementById("userSub").textContent = user.subscription + " months";
-        document.getElementById("editName").value = user.name;
-        document.getElementById("editEmail").value = user.email;
-        document.getElementById("profileImg").src = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
-        document.getElementById("profileSelect").value = user.profile || "https://i.imgur.com/1Q9Z1Zm.png";
+    await db.collection("users").doc(uid).update({
+      name: newName, email: newEmail, profile: newProfile
+    });
 
-        const startDate = new Date(user.registeredAt);
-        const endDate = new Date(startDate);
-        endDate.setMonth(endDate.getMonth() + (user.subscription || 0));
-        const today = new Date();
-        const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+    document.getElementById("userName").textContent = newName;
+    document.getElementById("userEmail").textContent = newEmail;
+    document.getElementById("profileImg").src = newProfile;
+    showToast("Profile updated!");
+  }
 
-        document.getElementById("daysLeft").textContent = diffDays > 0 ? diffDays + " days" : "0 days";
-        document.getElementById("userStatus").textContent = diffDays > 0 ? "Active" : "Expired";
-        document.getElementById("expiresOn").textContent = endDate.toLocaleDateString("en-GB", {
-          year: "numeric", month: "long", day: "numeric"
-        });
-      }
-    }
+  function logout() {
+    auth.signOut();
+    sessionStorage.removeItem("nelsonfx_user_id");
+    window.location.href = "login.html";
+  }
 
-    async function updateProfile() {
-      const newName = document.getElementById("editName").value.trim();
-      const newEmail = document.getElementById("editEmail").value.trim();
-      const newProfile = document.getElementById("profileSelect").value;
-
-      if (!newName || !newEmail) {
-        alert("Please enter name and email.");
-        return;
-      }
-
-      try {
-        await db.collection("users").doc(uid).update({
-          name: newName,
-          email: newEmail,
-          profile: newProfile
-        });
-
-        document.getElementById("userName").textContent = newName;
-        document.getElementById("userEmail").textContent = newEmail;
-        document.getElementById("profileImg").src = newProfile;
-
-        alert("Profile updated!");
-      } catch (error) {
-        alert("Update failed: " + error.message);
-      }
-    }
-
-    function logout() {
-      auth.signOut();
-      sessionStorage.removeItem("nelsonfx_user_id");
-      window.location.href = "login.html";
-    }
-
-    loadUser();
-  </script>
+  loadUser();
+</script>
 
 </body>
 </html>
