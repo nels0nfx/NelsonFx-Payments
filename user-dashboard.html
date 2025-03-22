@@ -57,6 +57,7 @@
       <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
       <p><span>Status:</span> <span id="userStatus">Checking...</span></p>
       <p><span>Days Remaining:</span> <span id="daysLeft">Calculating...</span></p>
+      <p><span>Expires On:</span> <span id="expiresOn">-</span></p>
     </div>
 
     <button onclick="logout()">Logout</button>
@@ -112,6 +113,11 @@
         const today = new Date();
         const diffTime = endDate - today;
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        const formattedEnd = endDate.toLocaleDateString("en-GB", {
+          year: "numeric", month: "long", day: "numeric"
+        });
+        document.getElementById("expiresOn").textContent = formattedEnd;
 
         if (diffDays > 0) {
           document.getElementById("daysLeft").textContent = diffDays + " days";
