@@ -196,5 +196,12 @@
       window.location.href = "admin.html";
     }
   </script>
+  // Hide spinner after page loads
+window.addEventListener("load", () => {
+  const spinner = document.getElementById("spinner");
+  if (spinner) {
+    spinner.style.display = "none";
+  }
+});
 </body>
 </html>
