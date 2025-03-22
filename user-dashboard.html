@@ -3,79 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Dashboard - NelsonFx</title>
+  <title>NelsonFx | User Dashboard</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
       color: #fff;
-      text-align: center;
-      padding: 30px;
+      margin: 0;
+      padding: 0;
     }
 
-    .dashboard-box {
-      max-width: 800px;
-      margin: auto;
-      background: #1f1f1f;
-      padding: 30px;
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #141414;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #00ffcc33;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px #00ffcc44;
+      background: #1f1f1f;
     }
 
-    h2 {
+    h2, h3 {
+      color: #00ffcc;
+      margin-bottom: 15px;
+    }
+
+    p {
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    .info p span {
+      font-weight: bold;
       color: #00ffcc;
     }
 
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+    }
+
     button {
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
       background: #00ffcc;
       color: #000;
       border: none;
-      padding: 10px 20px;
-      font-weight: bold;
       border-radius: 6px;
       cursor: pointer;
       margin-top: 10px;
     }
 
-    .info {
-      margin: 20px 0;
-      text-align: left;
-    }
-
-    .info span {
-      font-weight: bold;
-    }
-
-    input, select {
-      padding: 10px;
-      margin: 8px 0;
-      width: 90%;
-      border-radius: 6px;
-      border: none;
-    }
-
-    .edit-section {
-      margin-top: 30px;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
-    }
-
     .profile-pic {
+      display: block;
       width: 100px;
       height: 100px;
+      object-fit: cover;
+      margin: 0 auto 15px;
       border-radius: 50%;
-      margin: 10px auto;
       border: 3px solid #00ffcc;
     }
 
-    .grass-background {
-      margin-top: 40px;
-      padding: 25px;
+    .price-widget {
+      margin-top: 30px;
+      padding: 15px;
+      border-radius: 12px;
       background-image: url('https://cdn.pixabay.com/photo/2017/02/01/22/02/grass-2030485_1280.jpg');
       background-size: cover;
       background-position: center;
-      border-radius: 12px;
       box-shadow: 0 0 15px #00ffcc88;
       animation: glow 5s ease-in-out infinite alternate;
     }
@@ -92,16 +102,27 @@
       border-radius: 10px;
       margin-top: 10px;
     }
+
+    .top-bar {
+      text-align: right;
+    }
   </style>
 </head>
 <body>
 
-  <div class="dashboard-box">
-    <h2>User Dashboard</h2>
+  <div class="container">
 
-    <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
+    <div class="top-bar">
+      <button onclick="logout()">Logout</button>
+    </div>
 
-    <div class="info">
+    <div class="section" style="text-align: center;">
+      <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
+      <h2>Welcome to Your Dashboard</h2>
+    </div>
+
+    <div class="section info">
+      <h3>Account Info</h3>
       <p><span>Name:</span> <span id="userName">Loading...</span></p>
       <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
       <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
@@ -110,25 +131,24 @@
       <p><span>Expires On:</span> <span id="expiresOn">-</span></p>
     </div>
 
-    <div class="edit-section">
+    <div class="section">
       <h3>Edit Profile</h3>
-      <input type="text" id="editName" placeholder="New Name" /><br>
-      <input type="email" id="editEmail" placeholder="New Email" /><br>
+      <input type="text" id="editName" placeholder="New Name" />
+      <input type="email" id="editEmail" placeholder="New Email" />
       <select id="profileSelect">
         <option value="https://i.imgur.com/1Q9Z1Zm.png">Male 1</option>
         <option value="https://i.imgur.com/1z0fPbn.png">Female 1</option>
         <option value="https://i.imgur.com/v6d5Woz.png">Male 2</option>
         <option value="https://i.imgur.com/kKnNmnE.png">Female 2</option>
-      </select><br>
+      </select>
       <button onclick="updateProfile()">Update Profile</button>
     </div>
 
-    <button onclick="logout()">Logout</button>
-
-    <div class="grass-background">
-      <h3>Live Forex & Stock Prices</h3>
+    <div class="price-widget">
+      <h3>Live Forex Prices</h3>
       <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" allowfullscreen></iframe>
     </div>
+
   </div>
 
   <!-- Firebase SDK -->
