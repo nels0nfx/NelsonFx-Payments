@@ -106,6 +106,7 @@
 
   <div id="users" class="section">
     <h2>Manage Users</h2>
+    <input type="text" id="searchUser" oninput="filterUsers()" placeholder="Search by name or email..." style="width: 80%; padding: 10px; border-radius: 6px;">
     <div id="userTable">Loading...</div>
   </div>
 
@@ -140,6 +141,7 @@
   const db = firebase.firestore();
 
   const ADMIN_PASSWORD = "2468Abcd";
+  let allUsers = [];
 
   function checkAdmin() {
     const entered = document.getElementById("adminPass").value;
@@ -188,24 +190,53 @@
 
   function loadUsers() {
     db.collection("users").get().then(snapshot => {
-      let html = `<table><tr><th>Name</th><th>Email</th><th>Sub</th><th>Actions</th></tr>`;
+      allUsers = [];
       snapshot.forEach(doc => {
-        const user = doc.data();
-        html += `
-          <tr>
-            <td>${user.name || ""}</td>
-            <td>${user.email || ""}</td>
-            <td>${user.subscription || 0} mo</td>
-            <td>
-              <button onclick="editUser('${doc.id}')">Edit</button>
-              <button onclick="deleteUser('${doc.id}')">Delete</button>
-            </td>
-          </tr>
-        `;
+        allUsers.push({ id: doc.id, ...doc.data() });
       });
-      html += `</table>`;
-      document.getElementById("userTable").innerHTML = html;
+      displayUsers(allUsers);
     });
+  }
+
+  function displayUsers(users) {
+    let html = `<table><tr><th>Name</th><th>Email</th><th>Sub</th><th>Status</th><th>Actions</th></tr>`;
+    users.forEach(user => {
+      html += `
+        <tr>
+          <td>${user.name || ""}</td>
+          <td>${user.email || ""}</td>
+          <td>${user.subscription || 0} mo</td>
+          <td>${user.banned ? "Banned" : "Active"}</td>
+          <td>
+            <button onclick="editUser('${user.id}')">Edit</button>
+            <button onclick="deleteUser('${user.id}')">Delete</button>
+            <button onclick="banUser('${user.id}')">${user.banned ? "Unban" : "Ban"}</button>
+          </td>
+        </tr>
+      `;
+    });
+    html += `</table>`;
+    document.getElementById("userTable").innerHTML = html;
+  }
+
+  function filterUsers() {
+    const search = document.getElementById("searchUser").value.toLowerCase();
+    const filtered = allUsers.filter(u =>
+      (u.name && u.name.toLowerCase().includes(search)) ||
+      (u.email && u.email.toLowerCase().includes(search))
+    );
+    displayUsers(filtered);
+  }
+
+  function editUser(id) {
+    const newSub = prompt("Enter new subscription months:");
+    if (newSub !== null && !isNaN(newSub)) {
+      db.collection("users").doc(id).update({ subscription: parseInt(newSub) })
+        .then(() => {
+          showToast("User updated");
+          loadUsers();
+        });
+    }
   }
 
   function deleteUser(id) {
@@ -218,15 +249,15 @@
     }
   }
 
-  function editUser(id) {
-    const newSub = prompt("Enter new subscription months:");
-    if (newSub !== null && !isNaN(newSub)) {
-      db.collection("users").doc(id).update({ subscription: parseInt(newSub) })
-        .then(() => {
-          showToast("User updated");
-          loadUsers();
-        });
-    }
+  function banUser(id) {
+    const user = allUsers.find(u => u.id === id);
+    const newStatus = !user.banned;
+
+    db.collection("users").doc(id).update({ banned: newStatus })
+      .then(() => {
+        showToast(newStatus ? "User banned" : "User unbanned");
+        loadUsers();
+      });
   }
 
   function resetUserPassword() {
