@@ -13,38 +13,53 @@
       margin: 0; padding: 0;
     }
     .container {
-      max-width: 900px; margin: 40px auto; padding: 20px;
-      background: #141414; border-radius: 15px;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #141414;
+      border-radius: 15px;
       box-shadow: 0 0 25px #00ffcc33;
     }
     .section {
-      margin-bottom: 30px; padding: 20px;
-      border-radius: 10px; background: #1f1f1f;
+      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: 10px;
+      background: #1f1f1f;
     }
-    h2, h3 { color: #00ffcc; margin-bottom: 15px; }
+    h2, h3 { color: #00ffcc; }
     p { line-height: 1.6; font-size: 16px; }
     .info p span { font-weight: bold; color: #00ffcc; }
     input, select {
-      width: 100%; padding: 12px; margin: 10px 0;
-      font-size: 16px; border-radius: 6px; border: none;
+      width: 100%; padding: 12px;
+      margin: 10px 0;
+      font-size: 16px; border-radius: 6px;
+      border: none;
     }
     button {
-      padding: 12px 20px; font-size: 16px;
-      font-weight: bold; background: #00ffcc; color: #000;
-      border: none; border-radius: 6px; cursor: pointer;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
       margin-top: 10px;
     }
     .profile-pic {
-      display: block; width: 100px; height: 100px;
-      object-fit: cover; margin: 0 auto 15px;
-      border-radius: 50%; border: 3px solid #00ffcc;
+      display: block;
+      width: 100px; height: 100px;
+      object-fit: cover;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      border: 3px solid #00ffcc;
     }
     .price-widget {
-      margin-top: 30px; padding: 15px;
+      background: url('https://cdn.pixabay.com/photo/2017/02/01/22/02/grass-2030485_1280.jpg') center/cover;
       border-radius: 12px;
-      background-image: url('https://cdn.pixabay.com/photo/2017/02/01/22/02/grass-2030485_1280.jpg');
-      background-size: cover; background-position: center;
       box-shadow: 0 0 15px #00ffcc88;
+      padding: 20px;
+      margin-top: 30px;
       animation: glow 5s ease-in-out infinite alternate;
     }
     @keyframes glow {
@@ -52,99 +67,124 @@
       to   { box-shadow: 0 0 25px #00ffcccc; }
     }
     iframe {
-      width: 100%; height: 300px; border: none;
-      border-radius: 10px; margin-top: 10px;
+      width: 100%; height: 300px;
+      border-radius: 10px;
+      border: none;
     }
-    .top-bar { text-align: right; }
     .toast {
-      position: fixed; top: 20px; right: 20px;
-      background: #00ffcc; color: #000;
-      padding: 12px 20px; border-radius: 6px;
-      box-shadow: 0 0 10px #00ffcc66;
-      font-weight: bold; display: none;
+      position: fixed;
+      top: 20px; right: 20px;
+      background: #00ffcc;
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      display: none;
       z-index: 999;
     }
     .progress-container {
-      background: #333; border-radius: 20px;
+      background: #333;
+      border-radius: 20px;
       height: 20px; margin: 10px 0;
     }
     .progress-bar {
-      height: 100%; border-radius: 20px;
-      background: #00ffcc; width: 0%;
+      height: 100%;
+      border-radius: 20px;
+      background: #00ffcc;
+      width: 0%;
       transition: width 0.4s ease-in-out;
-    }
-    .alert {
-      background: #000;
-      border-left: 6px solid #00ffcc;
-      padding: 10px 15px;
-      font-size: 15px;
-      color: #fff;
-      margin: 10px 0;
-      border-radius: 6px;
     }
     .badge {
       display: inline-block;
-      margin-top: 10px;
       padding: 6px 15px;
       background: #00ffcc;
       color: #000;
       font-weight: bold;
       border-radius: 20px;
+      margin-top: 10px;
     }
     .danger {
       background: #ff4d4d;
       color: #fff;
     }
+    .alert-warning {
+      background: #ff4444;
+      color: #fff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    ul.login-list {
+      list-style: none;
+      padding: 0;
+    }
+    ul.login-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #444;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-<div class="toast" id="toast">Updated Successfully!</div>
+<div class="toast" id="toast">Updated!</div>
 
 <div class="container">
-  <div class="top-bar">
+  <div class="top-bar" style="text-align:right;">
     <button onclick="logout()">Logout</button>
   </div>
 
-  <div class="section" style="text-align: center;">
+  <div class="section" style="text-align:center;">
     <img src="" id="profileImg" class="profile-pic" alt="Profile Picture">
-    <input type="file" id="uploadPic" accept="image/*" onchange="uploadProfileImage()" />
-    <h2>Welcome to Your Dashboard</h2>
+    <input type="file" id="uploadPic" onchange="uploadProfileImage()" />
+    <h2>Welcome</h2>
     <div id="badgeDisplay" class="badge">Level 1</div>
   </div>
 
   <div class="section info">
     <h3>Account Info</h3>
-    <p><span>Name:</span> <span id="userName">Loading...</span></p>
-    <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
-    <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
-    <p><span>Status:</span> <span id="userStatus">Checking...</span></p>
-    <p><span>Expires On:</span> <span id="expiresOn">-</span></p>
+    <p><span>Name:</span> <span id="userName"></span></p>
+    <p><span>Email:</span> <span id="userEmail"></span></p>
+    <p><span>Subscription:</span> <span id="userSub"></span></p>
+    <p><span>Status:</span> <span id="userStatus"></span></p>
+    <p><span>Expires:</span> <span id="expiresOn"></span></p>
     <div class="progress-container">
       <div class="progress-bar" id="progressBar"></div>
     </div>
-    <div class="alert">
-      Days Remaining: <span id="daysLeft">...</span>
+    <div class="alert-warning" id="expireAlert" style="display:none;">
+      Your subscription is about to expire!
     </div>
+    <p><strong>Days Left:</strong> <span id="daysLeft"></span></p>
   </div>
 
   <div class="section">
     <h3>Edit Profile</h3>
-    <input type="text" id="editName" placeholder="New Name" />
-    <input type="email" id="editEmail" placeholder="New Email" />
+    <input type="text" id="editName" placeholder="New Name">
+    <input type="email" id="editEmail" placeholder="New Email">
     <select id="profileSelect">
       <option value="https://i.imgur.com/1Q9Z1Zm.png">Male 1</option>
       <option value="https://i.imgur.com/1z0fPbn.png">Female 1</option>
-      <option value="https://i.imgur.com/v6d5Woz.png">Male 2</option>
-      <option value="https://i.imgur.com/kKnNmnE.png">Female 2</option>
     </select>
     <button onclick="updateProfile()">Update Profile</button>
     <button onclick="resetPassword()" class="danger">Reset My Password</button>
   </div>
 
+  <div class="section">
+    <h3>Change Password</h3>
+    <input type="password" id="newPass" placeholder="New Password">
+    <input type="password" id="confirmPass" placeholder="Confirm Password">
+    <button onclick="changePassword()">Change Password</button>
+  </div>
+
+  <div class="section">
+    <h3>Login History</h3>
+    <ul class="login-list" id="loginList"></ul>
+  </div>
+
   <div class="price-widget">
-    <h3>Live Forex Prices</h3>
-    <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" allowfullscreen></iframe>
+    <h3>Live Forex Chart</h3>
+    <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme"></iframe>
   </div>
 </div>
 
@@ -163,7 +203,6 @@
     messagingSenderId: "214577890152",
     appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
   };
-
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
@@ -171,7 +210,7 @@
   const uid = sessionStorage.getItem("nelsonfx_user_id");
 
   if (!uid) {
-    alert("Access denied. Please login.");
+    alert("You are not logged in.");
     window.location.href = "login.html";
   }
 
@@ -184,18 +223,14 @@
 
   async function loadUser() {
     const doc = await db.collection("users").doc(uid).get();
-    if (!doc.exists) return;
-
     const user = doc.data();
     const { name, email, subscription, profile, registeredAt, xp = 0 } = user;
-    const regDate = new Date(registeredAt);
+    const reg = new Date(registeredAt);
     const today = new Date();
-    const endDate = new Date(regDate);
-    endDate.setMonth(endDate.getMonth() + (subscription || 0));
-    const remaining = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-    const totalDays = subscription * 30;
-    const usedDays = totalDays - remaining;
-    const percent = Math.floor((usedDays / totalDays) * 100);
+    const end = new Date(reg);
+    end.setMonth(end.getMonth() + subscription);
+    const daysLeft = Math.ceil((end - today) / (1000 * 60 * 60 * 24));
+    const percent = Math.min(100, Math.floor((1 - (daysLeft / (subscription * 30))) * 100));
     const level = Math.floor(xp / 100);
 
     document.getElementById("userName").textContent = name;
@@ -203,52 +238,71 @@
     document.getElementById("userSub").textContent = subscription + " months";
     document.getElementById("editName").value = name;
     document.getElementById("editEmail").value = email;
-    document.getElementById("profileImg").src = profile || "";
-    document.getElementById("profileSelect").value = profile || "";
-    document.getElementById("userStatus").textContent = remaining > 0 ? "Active" : "Expired";
-    document.getElementById("expiresOn").textContent = endDate.toDateString();
-    document.getElementById("daysLeft").textContent = remaining > 0 ? remaining + " days left" : "Expired";
+    document.getElementById("profileImg").src = profile;
+    document.getElementById("profileSelect").value = profile;
+    document.getElementById("userStatus").textContent = daysLeft > 0 ? "Active" : "Expired";
+    document.getElementById("expiresOn").textContent = end.toDateString();
+    document.getElementById("daysLeft").textContent = daysLeft;
     document.getElementById("progressBar").style.width = percent + "%";
     document.getElementById("badgeDisplay").textContent = "Level " + level;
+
+    if (daysLeft <= 5) {
+      document.getElementById("expireAlert").style.display = "block";
+    }
+
+    // Track login
+    const loginRef = db.collection("users").doc(uid).collection("logins");
+    await loginRef.add({ time: new Date().toISOString() });
+
+    // Load login history
+    const historySnap = await loginRef.orderBy("time", "desc").limit(5).get();
+    const loginList = document.getElementById("loginList");
+    loginList.innerHTML = "";
+    historySnap.forEach(doc => {
+      const date = new Date(doc.data().time);
+      loginList.innerHTML += `<li>${date.toLocaleString()}</li>`;
+    });
   }
 
   async function updateProfile() {
-    const newName = document.getElementById("editName").value.trim();
-    const newEmail = document.getElementById("editEmail").value.trim();
-    const newProfile = document.getElementById("profileSelect").value;
-    if (!newName || !newEmail) return showToast("Fill in name & email");
+    const name = document.getElementById("editName").value.trim();
+    const email = document.getElementById("editEmail").value.trim();
+    const profile = document.getElementById("profileSelect").value;
 
-    await db.collection("users").doc(uid).update({
-      name: newName,
-      email: newEmail,
-      profile: newProfile
-    });
-
-    document.getElementById("userName").textContent = newName;
-    document.getElementById("userEmail").textContent = newEmail;
-    document.getElementById("profileImg").src = newProfile;
+    await db.collection("users").doc(uid).update({ name, email, profile });
     showToast("Profile updated!");
+    document.getElementById("userName").textContent = name;
+    document.getElementById("userEmail").textContent = email;
+    document.getElementById("profileImg").src = profile;
   }
 
   async function uploadProfileImage() {
     const file = document.getElementById("uploadPic").files[0];
-    if (!file) return;
-
     const ref = storage.ref().child(`profiles/${uid}_${file.name}`);
     await ref.put(file);
     const url = await ref.getDownloadURL();
     await db.collection("users").doc(uid).update({ profile: url });
     document.getElementById("profileImg").src = url;
-    showToast("Image updated!");
+    showToast("Image uploaded!");
   }
 
   function resetPassword() {
     const email = document.getElementById("userEmail").textContent;
-    if (!email) return showToast("Email not found");
-
     firebase.auth().sendPasswordResetEmail(email)
       .then(() => showToast("Reset link sent to " + email))
-      .catch((e) => showToast("Error: " + e.message));
+      .catch(err => showToast("Error: " + err.message));
+  }
+
+  function changePassword() {
+    const pass = document.getElementById("newPass").value;
+    const confirm = document.getElementById("confirmPass").value;
+
+    if (pass !== confirm) return showToast("Passwords do not match");
+
+    const user = auth.currentUser;
+    user.updatePassword(pass)
+      .then(() => showToast("Password changed"))
+      .catch(e => showToast("Error: " + e.message));
   }
 
   function logout() {
@@ -259,6 +313,5 @@
 
   loadUser();
 </script>
-
 </body>
 </html>
