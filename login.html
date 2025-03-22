@@ -48,30 +48,42 @@
       <input type="password" id="password" placeholder="Password" required><br>
       <button type="submit">Login</button>
     </form>
-    <p>Don't have an account? <a href="register.html" style="color:#00ffcc;">Register here</a></p>
+    <p>Don’t have an account? <a href="register.html" style="color:#00ffcc;">Register here</a></p>
   </div>
 
-  <script>
-    document.getElementById("loginForm").addEventListener("submit", function (e) {
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      const userData = localStorage.getItem("nelsonfx_user_" + email);
-      if (!userData) {
-        alert("Account not found.");
-        return;
-      }
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      const user = JSON.parse(userData);
-      if (user.password !== password) {
-        alert("Incorrect password.");
-        return;
-      }
+        // Save session
+        sessionStorage.setItem("nelsonfx_user_id", user.uid);
+        window.location.href = "user-dashboard.html";
 
-      // Save session
-      sessionStorage.setItem("nelsonfx_current_user", email);
-      window.location.href = "user-dashboard.html";
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
     });
   </script>
 
