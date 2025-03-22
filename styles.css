@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #0b0c10;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
     color: #ffffff;
     line-height: 1.6;
     padding: 0;
@@ -127,6 +127,7 @@ button:hover {
     font-size: 16px;
     margin: 10px auto;
     color: #ccc;
+    display: none;
 }
 
 /* WhatsApp Support */
