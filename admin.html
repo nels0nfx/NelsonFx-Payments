@@ -48,9 +48,15 @@
   </div>
 
   <script>
+    // Check for session and auto-redirect if already logged in
+    if (sessionStorage.getItem("isAdmin") === "true") {
+      window.location.href = "dashboard.html";
+    }
+
     function checkLogin() {
       const password = document.getElementById("adminPass").value;
       if (password === "2468Abcd.") {
+        sessionStorage.setItem("isAdmin", "true");
         window.location.href = "dashboard.html";
       } else {
         alert("Incorrect password");
