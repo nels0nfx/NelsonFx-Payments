@@ -12,6 +12,7 @@
       text-align: center;
       padding: 40px;
     }
+
     .dashboard-box {
       max-width: 600px;
       margin: auto;
@@ -20,9 +21,11 @@
       border-radius: 10px;
       box-shadow: 0 0 10px #00ffcc44;
     }
+
     h2 {
       color: #00ffcc;
     }
+
     button {
       background: #00ffcc;
       color: #000;
@@ -33,9 +36,14 @@
       cursor: pointer;
       margin-top: 20px;
     }
+
     .info {
       margin: 20px 0;
       text-align: left;
+    }
+
+    .info span {
+      font-weight: bold;
     }
   </style>
 </head>
@@ -44,19 +52,20 @@
   <div class="dashboard-box">
     <h2>User Dashboard</h2>
     <div class="info">
-      <p><strong>Name:</strong> <span id="userName">Loading...</span></p>
-      <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
-      <p><strong>Subscription:</strong> <span id="userSub">0 months</span></p>
-      <p><strong>Status:</strong> <span id="userStatus">Inactive</span></p>
+      <p><span>Name:</span> <span id="userName">Loading...</span></p>
+      <p><span>Email:</span> <span id="userEmail">Loading...</span></p>
+      <p><span>Subscription:</span> <span id="userSub">0 months</span></p>
+      <p><span>Status:</span> <span id="userStatus">Checking...</span></p>
+      <p><span>Days Remaining:</span> <span id="daysLeft">Calculating...</span></p>
     </div>
 
     <button onclick="logout()">Logout</button>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -69,8 +78,8 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const uid = sessionStorage.getItem("nelsonfx_user_id");
 
@@ -88,9 +97,25 @@
         document.getElementById("userName").textContent = user.name;
         document.getElementById("userEmail").textContent = user.email;
         document.getElementById("userSub").textContent = user.subscription + " months";
-        document.getElementById("userStatus").textContent = user.subscription > 0 ? "Active" : "Inactive";
+
+        const startDate = new Date(user.registeredAt);
+        const months = user.subscription;
+        const endDate = new Date(startDate);
+        endDate.setMonth(endDate.getMonth() + months);
+
+        const today = new Date();
+        const diffTime = endDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays > 0) {
+          document.getElementById("daysLeft").textContent = diffDays + " days";
+          document.getElementById("userStatus").textContent = "Active";
+        } else {
+          document.getElementById("daysLeft").textContent = "0 days";
+          document.getElementById("userStatus").textContent = "Expired";
+        }
       } else {
-        alert("User record not found.");
+        alert("User not found.");
       }
     }
 
