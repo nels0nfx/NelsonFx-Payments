@@ -4,238 +4,146 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel - NelsonFx</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      text-align: center;
+      padding: 30px;
+    }
 
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    .admin-container {
+      max-width: 800px;
+      margin: auto;
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffcc44;
+    }
 
-  <!-- Style & Script -->
-  <link rel="stylesheet" href="admin-style.css" />
-  <script src="admin-script.js" defer></script>
+    h1, h2 {
+      color: #00ffcc;
+    }
+
+    button {
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .menu button {
+      margin: 5px;
+    }
+
+    .section {
+      display: none;
+      margin-top: 30px;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00ffcc;
+      color: #000;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      display: none;
+      z-index: 999;
+    }
+
+    input {
+      padding: 10px;
+      width: 80%;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Loading Spinner -->
-  <div id="spinner">
-    <div class="loader"></div>
+<div class="toast" id="toast">Toast</div>
+
+<div class="admin-container">
+  <h1>Admin Panel - NelsonFx</h1>
+  <button onclick="logout()">Logout</button>
+
+  <div class="menu">
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('reset')">Reset User Password</button>
+    <button onclick="showSection('settings')">Settings</button>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast-container"></div>
-
-  <div class="admin-container">
-    <h1>Admin Panel - NelsonFx</h1>
-    <button onclick="logout()">Logout</button>
-
-    <div class="menu">
-      <button onclick="showSection('dashboard')">Dashboard</button>
-      <button onclick="showSection('payments')">Manage Payments</button>
-      <button onclick="showSection('chat-section'); manageChat()">Manage Chats</button>
-      <button onclick="showSection('settings')">Settings</button>
-    </div>
-
-    <!-- Dashboard Section -->
-    <div id="dashboard" class="section">
-      <h2>Dashboard</h2>
-      <p><strong>Total Payments:</strong> <span id="total-payments">0</span></p>
-      <p><strong>Active Subscriptions:</strong> <span id="active-subs">0</span></p>
-      <canvas id="analyticsChart" width="300" height="200"></canvas>
-    </div>
-
-    <!-- Payments Section -->
-    <div id="payments" class="section" style="display: none;">
-      <h2>Manage Payments</h2>
-      <form id="payment-proof-form">
-        <label for="name">Client Name:</label>
-        <input type="text" id="name" required />
-
-        <label for="amount">Amount Paid (₦):</label>
-        <input type="number" id="amount" required />
-
-        <label for="proof">Upload Proof:</label>
-        <input type="file" id="proof" required />
-
-        <button type="submit">Submit Payment</button>
-      </form>
-
-      <!-- Upload History Table -->
-      <h3 style="margin-top: 30px;">Upload History</h3>
-      <table id="upload-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Amount</th>
-            <th>File Name</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <button onclick="exportUploadHistory()" style="margin-top: 20px;">Export as CSV</button>
-    </div>
-
-    <!-- Manage Chat -->
-    <div id="chat-section" class="section" style="display: none;">
-      <h2>Manage Chats</h2>
-      <div id="chat-container"></div>
-    </div>
-
-    <!-- Settings -->
-    <div id="settings" class="section" style="display: none;">
-      <h2>Settings</h2>
-      <label for="admin-password">Change Admin Password:</label>
-      <input type="password" id="admin-password" placeholder="New password" />
-      <button onclick="changePassword()">Update Password</button>
-    </div>
+  <div id="dashboard" class="section" style="display: block;">
+    <h2>Dashboard</h2>
+    <p>Welcome, Admin! Manage user actions below.</p>
   </div>
 
-  <footer>
-    <p>&copy; 2025 NelsonFx Admin Panel. All Rights Reserved.</p>
-  </footer>
+  <div id="reset" class="section">
+    <h2>Reset User Password</h2>
+    <input type="email" id="resetEmail" placeholder="Enter user email" />
+    <button onclick="resetUserPassword()">Send Reset Link</button>
+  </div>
 
-  <script>
-    // Spinner
-    window.addEventListener("load", () => {
-      const spinner = document.getElementById("spinner");
-      if (spinner) spinner.style.display = "none";
-    });
+  <div id="settings" class="section">
+    <h2>Settings</h2>
+    <p>More admin settings coming soon...</p>
+  </div>
+</div>
 
-    // Animate counters
-    function animateValue(id, start, end, duration) {
-      const obj = document.getElementById(id);
-      let current = start;
-      const step = Math.abs(Math.floor(duration / (end - start)));
-      const timer = setInterval(() => {
-        current += 1;
-        obj.textContent = current;
-        if (current >= end) clearInterval(timer);
-      }, step);
-    }
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-    // Toast notification
-    function showToast(message, duration = 3000) {
-      const container = document.getElementById("toast-container");
-      const toast = document.createElement("div");
-      toast.className = "toast";
-      toast.innerText = message;
-      container.appendChild(toast);
-      setTimeout(() => toast.remove(), duration);
-    }
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+    authDomain: "nelsonfx-d023e.firebaseapp.com",
+    projectId: "nelsonfx-d023e",
+    storageBucket: "nelsonfx-d023e.appspot.com",
+    messagingSenderId: "214577890152",
+    appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    // Dashboard load
-    document.addEventListener("DOMContentLoaded", () => {
-      animateValue("total-payments", 0, 48, 1000);
-      animateValue("active-subs", 0, 19, 1200);
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+  }
 
-      const ctx = document.getElementById('analyticsChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-          datasets: [{
-            label: 'Monthly Payments',
-            data: [5, 10, 8, 15, 20, 25],
-            borderColor: '#00ffcc',
-            backgroundColor: '#00ffcc44',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            y: { beginAtZero: true }
-          },
-          plugins: {
-            legend: { labels: { color: '#fff' } }
-          }
-        }
-      });
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
 
-      // Form submit
-      const form = document.getElementById("payment-proof-form");
-      if (form) {
-        form.addEventListener("submit", function (e) {
-          e.preventDefault();
+  function resetUserPassword() {
+    const email = document.getElementById("resetEmail").value.trim();
+    if (!email) return showToast("Please enter a user email");
 
-          const name = document.getElementById("name").value;
-          const amount = document.getElementById("amount").value;
-          const fileInput = document.getElementById("proof");
-          const file = fileInput.files[0];
+    auth.sendPasswordResetEmail(email)
+      .then(() => showToast("Reset link sent to " + email))
+      .catch(err => showToast("Error: " + err.message));
+  }
 
-          if (name && amount && file) {
-            const table = document.getElementById("upload-table").querySelector("tbody");
-            const newRow = document.createElement("tr");
-            newRow.innerHTML = `
-              <td>${name}</td>
-              <td>₦${amount}</td>
-              <td>${file.name}</td>
-              <td>${new Date().toLocaleString()}</td>`;
-            table.appendChild(newRow);
-            showToast("Payment proof submitted and recorded.");
-            form.reset();
-          } else {
-            showToast("Please fill in all fields.");
-          }
-        });
-      }
-    });
+  function logout() {
+    sessionStorage.removeItem("nelsonfx_user_id");
+    window.location.href = "login.html";
+  }
+</script>
 
-    // Export Upload History
-    function exportUploadHistory() {
-      const rows = document.querySelectorAll("#upload-table tr");
-      let csv = [];
-
-      rows.forEach(row => {
-        const cols = row.querySelectorAll("th, td");
-        let rowData = [];
-        cols.forEach(col => rowData.push(col.innerText));
-        csv.push(rowData.join(","));
-      });
-
-      const csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "upload_history.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      showToast("Upload history exported as CSV.");
-    }
-
-    // Section toggle
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
-    }
-
-    // Tawk Chat
-    function manageChat() {
-      document.getElementById("chat-container").innerHTML = `
-        <iframe src="https://dashboard.tawk.to"
-          width="100%" height="500px"
-          style="border:none; border-radius:8px;"></iframe>`;
-    }
-
-    // Change password
-    function changePassword() {
-      const newPass = document.getElementById("admin-password").value;
-      if (newPass.length >= 6) {
-        showToast("Password updated successfully!");
-        document.getElementById("admin-password").value = "";
-      } else {
-        showToast("Password must be at least 6 characters.");
-      }
-    }
-
-    // Logout
-    function logout() {
-      sessionStorage.removeItem("isAdmin");
-      showToast("You have been logged out.");
-      window.location.href = "admin.html";
-    }
-  </script>
 </body>
 </html>
