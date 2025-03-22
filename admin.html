@@ -7,259 +7,236 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0f2027;
+      background: #121212;
       color: #fff;
-      padding: 30px;
       text-align: center;
+      padding: 30px;
     }
-
-    .login-box, .dashboard-box {
-      max-width: 1000px;
+    .admin-container {
+      max-width: 900px;
       margin: auto;
       background: #1f1f1f;
       padding: 30px;
       border-radius: 10px;
       box-shadow: 0 0 10px #00ffcc44;
     }
-
-    input[type="password"], input[type="number"] {
-      padding: 10px;
-      width: 250px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
+    h1, h2 {
+      color: #00ffcc;
     }
-
     button {
-      padding: 10px 20px;
       background: #00ffcc;
       color: #000;
       border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
       font-weight: bold;
+      border-radius: 6px;
       cursor: pointer;
-      margin: 10px;
+      margin: 5px;
     }
-
+    .menu button {
+      margin: 5px;
+    }
+    .section {
+      display: none;
+      margin-top: 30px;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00ffcc;
+      color: #000;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      display: none;
+      z-index: 999;
+    }
+    input, select {
+      padding: 10px;
+      width: 80%;
+      margin: 8px 0;
+      border-radius: 5px;
+      border: none;
+    }
     table {
       width: 100%;
-      margin-top: 30px;
+      margin-top: 10px;
       border-collapse: collapse;
     }
-
     th, td {
-      padding: 12px;
-      border-bottom: 1px solid #00ffcc33;
+      padding: 10px;
+      border: 1px solid #444;
     }
-
     th {
-      background-color: #00ffcc22;
-      color: #00ffcc;
-    }
-
-    .footer {
-      margin-top: 40px;
-      font-size: 14px;
-      color: #aaa;
-    }
-
-    img.proof-img {
-      width: 120px;
-      border-radius: 6px;
-      border: 1px solid #00ffcc44;
+      background: #00ffcc;
+      color: #000;
     }
   </style>
 </head>
 <body>
 
-  <!-- Admin Login -->
-  <div class="login-box" id="loginBox">
-    <h2>Admin Login</h2>
-    <input type="password" id="adminPass" placeholder="Enter Admin Password">
-    <br>
-    <button onclick="checkAdmin()">Login</button>
+<div class="toast" id="toast">Toast</div>
+
+<div class="admin-container" id="loginSection">
+  <h1>Admin Login</h1>
+  <input type="password" id="adminPass" placeholder="Enter Admin Password" />
+  <button onclick="checkAdmin()">Enter</button>
+</div>
+
+<div class="admin-container" id="mainPanel" style="display: none;">
+  <h1>Admin Panel - NelsonFx</h1>
+  <button onclick="logout()">Logout</button>
+
+  <div class="menu">
+    <button onclick="showSection('dashboard')">Dashboard</button>
+    <button onclick="showSection('users')">Manage Users</button>
+    <button onclick="showSection('reset')">Reset User Password</button>
+    <button onclick="showSection('settings')">Settings</button>
   </div>
 
-  <!-- Admin Dashboard -->
-  <div class="dashboard-box" id="dashboardBox" style="display: none;">
-    <h2>Welcome, Admin - Manage Users</h2>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Subscription</th>
-          <th>Status</th>
-          <th>Update</th>
-        </tr>
-      </thead>
-      <tbody id="userTable"></tbody>
-    </table>
-
-    <h2 style="margin-top: 40px;">Submitted Payment Proofs</h2>
-    <button onclick="exportProofsCSV()">Download CSV</button>
-    <table>
-      <thead>
-        <tr>
-          <th>Client Name</th>
-          <th>Amount (₦)</th>
-          <th>Proof</th>
-        </tr>
-      </thead>
-      <tbody id="proofTable"></tbody>
-    </table>
-
-    <div class="footer">
-      &copy; 2025 NelsonFx Admin Panel
-    </div>
+  <div id="dashboard" class="section" style="display: block;">
+    <h2>Dashboard Analytics</h2>
+    <p><strong>Total Users:</strong> <span id="totalUsers">0</span></p>
+    <p><strong>Active Subscriptions:</strong> <span id="activeSubs">0</span></p>
   </div>
 
-  <!-- Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      updateDoc,
-      doc
-    } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+  <div id="users" class="section">
+    <h2>Manage Users</h2>
+    <div id="userTable">Loading...</div>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
-      authDomain: "nelsonfx-d023e.firebaseapp.com",
-      projectId: "nelsonfx-d023e",
-      storageBucket: "nelsonfx-d023e.firebasestorage.app",
-      messagingSenderId: "214577890152",
-      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
-    };
+  <div id="reset" class="section">
+    <h2>Reset User Password</h2>
+    <input type="email" id="resetEmail" placeholder="Enter user email" />
+    <button onclick="resetUserPassword()">Send Reset Link</button>
+  </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    let proofsData = [];
+  <div id="settings" class="section">
+    <h2>Settings</h2>
+    <p>More admin settings coming soon...</p>
+  </div>
+</div>
 
-    window.checkAdmin = function () {
-      const inputPass = document.getElementById("adminPass").value;
-      if (inputPass === "2468Abcd.") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboardBox").style.display = "block";
-        loadUsers();
-        loadProofs();
-        autoExpireAndNotify();
-      } else {
-        alert("Incorrect password.");
-      }
-    };
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    async function loadUsers() {
-      const userTable = document.getElementById("userTable");
-      userTable.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "users"));
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+    authDomain: "nelsonfx-d023e.firebaseapp.com",
+    projectId: "nelsonfx-d023e",
+    storageBucket: "nelsonfx-d023e.appspot.com",
+    messagingSenderId: "214577890152",
+    appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-      querySnapshot.forEach((docSnap) => {
-        const user = docSnap.data();
-        const row = document.createElement("tr");
+  const ADMIN_PASSWORD = "2468Abcd";
 
-        row.innerHTML = `
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td>
-            <input type="number" id="sub-${docSnap.id}" value="${user.subscription}" min="0" />
-          </td>
-          <td>${user.subscription > 0 ? "Active" : "Expired"}</td>
-          <td>
-            <button onclick="updateSub('${docSnap.id}')">Update</button>
-          </td>
-        `;
-        userTable.appendChild(row);
-      });
+  function checkAdmin() {
+    const entered = document.getElementById("adminPass").value;
+    if (entered === ADMIN_PASSWORD) {
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("mainPanel").style.display = "block";
+      loadDashboard();
+    } else {
+      showToast("Wrong password");
     }
+  }
 
-    window.updateSub = async function (userId) {
-      const input = document.getElementById("sub-" + userId);
-      const newSub = parseInt(input.value);
+  function showToast(msg) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 3000);
+  }
 
-      if (!isNaN(newSub)) {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, {
-          subscription: newSub,
-          expiredNotified: false
+  function showSection(id) {
+    document.querySelectorAll(".section").forEach(s => s.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    if (id === 'users') loadUsers();
+  }
+
+  function logout() {
+    location.reload();
+  }
+
+  function loadDashboard() {
+    db.collection("users").get().then(snapshot => {
+      let total = 0;
+      let active = 0;
+      snapshot.forEach(doc => {
+        const user = doc.data();
+        total++;
+        const reg = new Date(user.registeredAt);
+        const end = new Date(reg);
+        end.setMonth(end.getMonth() + (user.subscription || 0));
+        if (end > new Date()) active++;
+      });
+      document.getElementById("totalUsers").textContent = total;
+      document.getElementById("activeSubs").textContent = active;
+    });
+  }
+
+  function loadUsers() {
+    db.collection("users").get().then(snapshot => {
+      let html = `<table><tr><th>Name</th><th>Email</th><th>Sub</th><th>Actions</th></tr>`;
+      snapshot.forEach(doc => {
+        const user = doc.data();
+        html += `
+          <tr>
+            <td>${user.name || ""}</td>
+            <td>${user.email || ""}</td>
+            <td>${user.subscription || 0} mo</td>
+            <td>
+              <button onclick="editUser('${doc.id}')">Edit</button>
+              <button onclick="deleteUser('${doc.id}')">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+      html += `</table>`;
+      document.getElementById("userTable").innerHTML = html;
+    });
+  }
+
+  function deleteUser(id) {
+    if (confirm("Are you sure you want to delete this user?")) {
+      db.collection("users").doc(id).delete()
+        .then(() => {
+          showToast("User deleted");
+          loadUsers();
         });
-        alert("Subscription updated!");
-        loadUsers();
-      }
-    };
-
-    async function autoExpireAndNotify() {
-      const querySnapshot = await getDocs(collection(db, "users"));
-
-      querySnapshot.forEach(async (docSnap) => {
-        const user = docSnap.data();
-        const userId = docSnap.id;
-
-        if (user.subscription <= 0 && !user.expiredNotified) {
-          const userRef = doc(db, "users", userId);
-          await updateDoc(userRef, { expiredNotified: true });
-
-          await fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              _subject: "User Subscription Expired",
-              Name: user.name,
-              Email: user.email,
-              Message: `User ${user.name} (${user.email}) has expired their subscription.`
-            })
-          });
-
-          console.log(`Email sent for expired user: ${user.email}`);
-        }
-      });
     }
+  }
 
-    async function loadProofs() {
-      const proofTable = document.getElementById("proofTable");
-      proofTable.innerHTML = "";
-      proofsData = [];
-
-      const proofSnap = await getDocs(collection(db, "payments"));
-
-      proofSnap.forEach((docSnap) => {
-        const data = docSnap.data();
-        proofsData.push(data);
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${data.name}</td>
-          <td>₦${data.amount}</td>
-          <td><img class="proof-img" src="${data.proof}" alt="Proof of Payment" /></td>
-        `;
-        proofTable.appendChild(row);
-      });
+  function editUser(id) {
+    const newSub = prompt("Enter new subscription months:");
+    if (newSub !== null && !isNaN(newSub)) {
+      db.collection("users").doc(id).update({ subscription: parseInt(newSub) })
+        .then(() => {
+          showToast("User updated");
+          loadUsers();
+        });
     }
+  }
 
-    window.exportProofsCSV = function () {
-      if (proofsData.length === 0) {
-        alert("No payment proofs to export.");
-        return;
-      }
-
-      let csv = "Name,Amount,Submitted At\n";
-      proofsData.forEach(p => {
-        csv += `"${p.name}","${p.amount}","${p.submittedAt || 'N/A'}"\n`;
-      });
-
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute("download", "payment_proofs.csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
-  </script>
+  function resetUserPassword() {
+    const email = document.getElementById("resetEmail").value;
+    if (!email) return showToast("Enter email");
+    auth.sendPasswordResetEmail(email)
+      .then(() => showToast("Reset link sent to " + email))
+      .catch(err => showToast("Error: " + err.message));
+  }
+</script>
 
 </body>
 </html>
