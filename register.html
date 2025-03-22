@@ -52,30 +52,59 @@
     <p>Already have an account? <a href="login.html" style="color:#00ffcc;">Login here</a></p>
   </div>
 
-  <script>
-    document.getElementById("registerForm").addEventListener("submit", function (e) {
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("registerForm").addEventListener("submit", async function (e) {
       e.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      // Save user locally (simulate database)
-      const user = { name, email, password, subscription: 0 };
-      localStorage.setItem("nelsonfx_user_" + email, JSON.stringify(user));
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      // Optional: Send email notification to admin using FormSubmit
-      fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          _subject: "New User Registered",
-          Name: name,
-          Email: email
-        })
-      });
+        await setDoc(doc(db, "users", user.uid), {
+          name: name,
+          email: email,
+          subscription: 0,
+          registeredAt: new Date().toISOString()
+        });
 
-      alert("Registration successful! Please log in.");
-      window.location.href = "login.html";
+        // Optional: Notify you via FormSubmit
+        fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            _subject: "New Forex User Registered",
+            Name: name,
+            Email: email
+          })
+        });
+
+        alert("Registration successful! You can now login.");
+        window.location.href = "login.html";
+
+      } catch (error) {
+        alert("Registration failed: " + error.message);
+      }
     });
   </script>
 
