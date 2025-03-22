@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Payment Proof - NelsonFx</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .upload-box {
+      max-width: 500px;
+      margin: auto;
+      background: #1f1f1f;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00ffcc44;
+    }
+
+    input, button {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      background: #fff;
+    }
+
+    button {
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .success {
+      background: #00ffcc22;
+      padding: 10px;
+      margin-top: 20px;
+      color: #00ffcc;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="upload-box">
+    <h2>Submit Payment Proof</h2>
+    <form id="proofForm">
+      <input type="text" id="name" placeholder="Your Name" required />
+      <input type="number" id="amount" placeholder="Amount Paid (₦)" required />
+      <input type="file" id="proofImage" accept="image/*" required />
+      <button type="submit">Submit Proof</button>
+    </form>
+
+    <div id="successBox" class="success" style="display: none;">
+      Payment proof submitted successfully!
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const proofForm = document.getElementById("proofForm");
+    const successBox = document.getElementById("successBox");
+
+    proofForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const file = document.getElementById("proofImage").files[0];
+
+      if (!file) return alert("Please select an image.");
+
+      const reader = new FileReader();
+      reader.onload = async function () {
+        const base64Proof = reader.result;
+
+        await addDoc(collection(db, "payments"), {
+          name: name,
+          amount: amount,
+          proof: base64Proof,
+          submittedAt: new Date().toISOString()
+        });
+
+        successBox.style.display = "block";
+        proofForm.reset();
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>
