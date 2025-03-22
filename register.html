@@ -53,11 +53,11 @@
   </div>
 
   <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
       authDomain: "nelsonfx-d023e.firebaseapp.com",
@@ -67,44 +67,33 @@
       appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-    document.getElementById("registerForm").addEventListener("submit", async function (e) {
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
       e.preventDefault();
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-
-        await setDoc(doc(db, "users", user.uid), {
-          name: name,
-          email: email,
-          subscription: 0,
-          registeredAt: new Date().toISOString()
+      auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          return db.collection("users").doc(user.uid).set({
+            name: name,
+            email: email,
+            subscription: 0,
+            registeredAt: new Date().toISOString()
+          });
+        })
+        .then(() => {
+          alert("Registration successful!");
+          window.location.href = "login.html";
+        })
+        .catch((error) => {
+          alert("Registration failed: " + error.message);
         });
-
-        // Optional: Notify you via FormSubmit
-        fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
-          method: "POST",
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            _subject: "New Forex User Registered",
-            Name: name,
-            Email: email
-          })
-        });
-
-        alert("Registration successful! You can now login.");
-        window.location.href = "login.html";
-
-      } catch (error) {
-        alert("Registration failed: " + error.message);
-      }
     });
   </script>
 
