@@ -89,21 +89,20 @@
           registeredAt: new Date().toISOString()
         });
 
-        // Send welcome email via FormSubmit
-        await fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
+        // Send welcome email to the user
+        await fetch("https://formsubmit.co/ajax/" + email, {
           method: "POST",
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            _subject: "New User Registered - NelsonFx",
+            _subject: "Welcome to NelsonFx!",
             Name: name,
-            Email: email,
-            Message: `A new user has registered on NelsonFx:\n\nName: ${name}\nEmail: ${email}`
+            Message: `Hi ${name},\n\nWelcome to NelsonFx! We're excited to have you here.\n\nYou now have access to your dashboard, where you'll be able to track your subscriptions and learn all about Forex.\n\nLet’s grow together!\n\n- NelsonFx Team`
           })
         });
 
-        alert("Registration successful! Welcome email sent.");
+        alert("Registration successful! A welcome email has been sent.");
         window.location.href = "login.html";
       } catch (error) {
         alert("Registration failed: " + error.message);
