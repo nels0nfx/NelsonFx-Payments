@@ -4,77 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NelsonFx Payments</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: black;
-            color: white;
-            text-align: center;
-        }
-        .container {
-            margin: 20px auto;
-            max-width: 600px;
-            padding: 20px;
-            background-color: #222;
-            border-radius: 10px;
-        }
-        .price-box {
-            margin: 20px 0;
-            padding: 15px;
-            border: 2px solid #FFD700;
-            border-radius: 10px;
-        }
-        button {
-            background-color: #FFD700;
-            color: black;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .whatsapp-icon {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg');
-            background-size: cover;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Pay Securely via OPay</h1>
-        <p>Select a plan and complete the payment:</p>
 
-        <div class="price-box">
-            <h2>Premium Signals</h2>
-            <p>₦50,000/month</p>
-            <p>₦200,000/year</p>
-            <button onclick="payNow()">Pay Now</button>
+    <header>
+        <h1>Welcome to NelsonFx Payments</h1>
+        <p>Pay securely via OPay to get access</p>
+    </header>
+
+    <section id="pricing">
+        <h2>Subscription Plans</h2>
+        <div class="plan">
+            <h3>Premium Signals</h3>
+            <p>₦50,000 per month</p>
+            <p>₦200,000 per year</p>
         </div>
-
-        <div class="price-box">
-            <h2>Forex Learning</h2>
-            <p>₦70,000/month</p>
-            <p>₦250,000/year</p>
-            <button onclick="payNow()">Pay Now</button>
+        <div class="plan">
+            <h3>Forex Learning</h3>
+            <p>₦70,000 per month</p>
+            <p>₦250,000 per year</p>
         </div>
-    </div>
+        <button onclick="showPaymentOptions()">Make Payment</button>
+    </section>
 
-    <a href="https://wa.me/2349138567333" class="whatsapp-icon" target="_blank"></a>
+    <section id="payment-methods">
+        <h2>Choose Payment Method</h2>
+        <div class="payment-option">
+            <h3>Pay via OPay</h3>
+            <p>Account Name: Chukwuwetalu Nelson Chinecherem</p>
+            <p>Account Number: 8125658151</p>
+            <p>Email: nwekechinecherem03@gmail.com</p>
+        </div>
+        <div class="payment-option">
+            <h3>Manual Transfer</h3>
+            <p>Make a transfer and upload proof of payment.</p>
+            <input type="file" id="proof-upload">
+            <button onclick="uploadProof()">Submit Proof</button>
+        </div>
+    </section>
 
-    <script>
-        function payNow() {
-            alert("Proceed with payment to: OPay Account - 8125658151 (Chukwuwetalu Nelson Chinecherem)");
-        }
-    </script>
+    <section id="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <button class="faq-question">How do I make a payment?</button>
+            <p class="faq-answer">You can pay via OPay or make a manual transfer.</p>
+        </div>
+        <div class="faq-item">
+            <button class="faq-question">How long does activation take?</button>
+            <p class="faq-answer">Activation is done within 24 hours after payment verification.</p>
+        </div>
+    </section>
 
-    <!-- Tawk.to Chat Support -->
+    <section id="testimonials">
+        <h2>What Clients Say</h2>
+        <div class="testimonial">
+            <p>"Great signals! Highly recommend." - John</p>
+        </div>
+        <div class="testimonial">
+            <p>"Very professional and reliable service." - Sarah</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 NelsonFx. All Rights Reserved.</p>
+    </footer>
+
+    <!-- WhatsApp Support Icon -->
+    <a href="https://wa.me/2349138567333" class="whatsapp-icon">
+        <img src="whatsapp-icon.png" alt="WhatsApp Support">
+    </a>
+
+    <!-- Tawk.to Live Chat -->
     <script type="text/javascript">
         var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
         (function(){
@@ -87,13 +89,5 @@
         })();
     </script>
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3Z21CP6QRD"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-3Z21CP6QRD');
-    </script>
 </body>
 </html>
