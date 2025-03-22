@@ -69,12 +69,12 @@
       border: 3px solid #00ffcc;
     }
 
-    iframe {
-      border: none;
-      margin-top: 20px;
-      width: 100%;
-      height: 400px;
+    .ticker-container {
+      margin-top: 40px;
       border-radius: 10px;
+      overflow: hidden;
+      background: #111;
+      box-shadow: 0 0 5px #00ffcc66;
     }
   </style>
 </head>
@@ -109,12 +109,10 @@
 
     <button onclick="logout()">Logout</button>
 
-    <h3 style="margin-top: 40px;">Live Forex Pairs</h3>
-
-    <!-- Transparent Charts -->
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:EURUSD&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:GBPUSD&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:USDJPY&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
+    <h3 style="margin-top: 40px;">Live Forex & Stock Prices</h3>
+    <div class="ticker-container">
+      <iframe src="https://www.widgets.investing.com/live-currency-cross-rates?theme=darkTheme" width="100%" height="300" frameborder="0"></iframe>
+    </div>
   </div>
 
   <!-- Firebase SDK -->
