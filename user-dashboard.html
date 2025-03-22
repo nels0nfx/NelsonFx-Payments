@@ -53,23 +53,52 @@
     <button onclick="logout()">Logout</button>
   </div>
 
-  <script>
-    const userEmail = sessionStorage.getItem("nelsonfx_current_user");
-    if (!userEmail) {
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
+      authDomain: "nelsonfx-d023e.firebaseapp.com",
+      projectId: "nelsonfx-d023e",
+      storageBucket: "nelsonfx-d023e.firebasestorage.app",
+      messagingSenderId: "214577890152",
+      appId: "1:214577890152:web:0e644efc05c06046a2ccdd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const uid = sessionStorage.getItem("nelsonfx_user_id");
+
+    if (!uid) {
       alert("You are not logged in.");
       window.location.href = "login.html";
-    } else {
-      const user = JSON.parse(localStorage.getItem("nelsonfx_user_" + userEmail));
-      document.getElementById("userName").textContent = user.name;
-      document.getElementById("userEmail").textContent = user.email;
-      document.getElementById("userSub").textContent = user.subscription + " months";
-
-      const status = user.subscription > 0 ? "Active" : "Inactive";
-      document.getElementById("userStatus").textContent = status;
     }
 
+    async function loadUser() {
+      const docRef = doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const user = docSnap.data();
+        document.getElementById("userName").textContent = user.name;
+        document.getElementById("userEmail").textContent = user.email;
+        document.getElementById("userSub").textContent = user.subscription + " months";
+        document.getElementById("userStatus").textContent = user.subscription > 0 ? "Active" : "Inactive";
+      } else {
+        alert("User record not found.");
+      }
+    }
+
+    loadUser();
+
     function logout() {
-      sessionStorage.removeItem("nelsonfx_current_user");
+      signOut(auth);
+      sessionStorage.removeItem("nelsonfx_user_id");
       window.location.href = "login.html";
     }
   </script>
