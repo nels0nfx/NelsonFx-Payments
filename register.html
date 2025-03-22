@@ -89,12 +89,10 @@
           registeredAt: new Date().toISOString()
         });
 
-        // Send welcome email to the user
+        // 1. Send email to the user
         await fetch("https://formsubmit.co/ajax/" + email, {
           method: "POST",
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             _subject: "Welcome to NelsonFx!",
             Name: name,
@@ -102,7 +100,19 @@
           })
         });
 
-        alert("Registration successful! A welcome email has been sent.");
+        // 2. Send notification to the admin
+        await fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            _subject: "New User Registered",
+            Name: name,
+            Email: email,
+            Message: `A new user just registered:\n\nName: ${name}\nEmail: ${email}`
+          })
+        });
+
+        alert("Registration successful! Welcome email sent to user & admin.");
         window.location.href = "login.html";
       } catch (error) {
         alert("Registration failed: " + error.message);
