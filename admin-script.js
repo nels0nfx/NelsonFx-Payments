@@ -1,53 +1,71 @@
-// Function to switch between admin panel sections
+// Show the selected section in the admin panel
 function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(section => {
-        section.style.display = 'none';
-    });
-    document.getElementById(sectionId).style.display = 'block';
+    const sections = document.querySelectorAll(".section");
+    sections.forEach(section => section.style.display = "none");
+
+    const target = document.getElementById(sectionId);
+    if (target) {
+        target.style.display = "block";
+    }
 }
 
-// Logout function (redirect to login page)
+// Logout admin
 function logout() {
+    alert("You have been logged out.");
     window.location.href = "admin.html";
 }
 
-// Handle add payment proof functionality
-document.addEventListener("DOMContentLoaded", function() {
+// Submit and validate payment proof
+document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("payment-proof-form");
+
     if (form) {
-        form.addEventListener("submit", function(event) {
-            event.preventDefault();
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
 
             const name = document.getElementById("name").value;
             const amount = document.getElementById("amount").value;
-            const file = document.getElementById("proof").files[0];
+            const proof = document.getElementById("proof").value;
 
-            if (name && amount && file) {
-                alert("Payment proof submitted successfully!");
-                form.reset();
-            } else {
-                alert("Please fill out all fields!");
+            if (!name || !amount || !proof) {
+                alert("Please fill in all fields before submitting.");
+                return;
             }
+
+            // Simulate successful submission (you can replace this with real backend later)
+            alert(`Payment proof submitted for ${name} (₦${amount}).`);
+            form.reset();
         });
     }
 });
 
-// Function to handle chat management
+// Load Tawk.to dashboard inside iframe dynamically
 function manageChat() {
-    const chatSection = document.getElementById("chat-section");
-    if (chatSection) {
-        chatSection.innerHTML = `<iframe src="https://dashboard.tawk.to" width="100%" height="500px" style="border:none;"></iframe>`;
+    const chatContainer = document.getElementById("chat-container");
+
+    if (chatContainer) {
+        chatContainer.innerHTML = `
+            <iframe src="https://dashboard.tawk.to" 
+                width="100%" 
+                height="500px" 
+                style="border: none; border-radius: 8px;">
+            </iframe>
+        `;
     }
 }
 
-// Function to show notifications
-function showNotification(message) {
-    const notification = document.createElement("div");
-    notification.classList.add("notification");
-    notification.innerText = message;
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
+// Change password (placeholder logic)
+function changePassword() {
+    const newPass = document.getElementById("admin-password").value;
+    if (newPass.length >= 6) {
+        alert("Password updated successfully!");
+        document.getElementById("admin-password").value = "";
+    } else {
+        alert("Password must be at least 6 characters.");
+    }
 }
+
+// Default section on page load
+document.addEventListener("DOMContentLoaded", () => {
+    showSection("dashboard");
+});
