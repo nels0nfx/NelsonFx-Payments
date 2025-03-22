@@ -99,6 +99,7 @@
     </table>
 
     <h2 style="margin-top: 40px;">Submitted Payment Proofs</h2>
+    <button onclick="exportProofsCSV()">Download CSV</button>
     <table>
       <thead>
         <tr>
@@ -137,8 +138,8 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    let proofsData = [];
 
-    // Admin login
     window.checkAdmin = function () {
       const inputPass = document.getElementById("adminPass").value;
       if (inputPass === "2468Abcd.") {
@@ -152,7 +153,6 @@
       }
     };
 
-    // Load users
     async function loadUsers() {
       const userTable = document.getElementById("userTable");
       userTable.innerHTML = "";
@@ -222,12 +222,15 @@
     async function loadProofs() {
       const proofTable = document.getElementById("proofTable");
       proofTable.innerHTML = "";
+      proofsData = [];
+
       const proofSnap = await getDocs(collection(db, "payments"));
 
       proofSnap.forEach((docSnap) => {
         const data = docSnap.data();
-        const row = document.createElement("tr");
+        proofsData.push(data);
 
+        const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.name}</td>
           <td>₦${data.amount}</td>
@@ -236,6 +239,26 @@
         proofTable.appendChild(row);
       });
     }
+
+    window.exportProofsCSV = function () {
+      if (proofsData.length === 0) {
+        alert("No payment proofs to export.");
+        return;
+      }
+
+      let csv = "Name,Amount,Submitted At\n";
+      proofsData.forEach(p => {
+        csv += `"${p.name}","${p.amount}","${p.submittedAt || 'N/A'}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute("download", "payment_proofs.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    };
   </script>
 
 </body>
