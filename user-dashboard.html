@@ -111,9 +111,10 @@
 
     <h3 style="margin-top: 40px;">Live Forex Pairs</h3>
 
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:EURUSD&interval=30&theme=dark" allowfullscreen></iframe>
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:GBPUSD&interval=30&theme=dark" allowfullscreen></iframe>
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:USDJPY&interval=30&theme=dark" allowfullscreen></iframe>
+    <!-- Transparent Charts -->
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:EURUSD&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:GBPUSD&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=FX:USDJPY&interval=30&theme=dark&style=1&backgroundColor=transparent&hide_legend=true&hide_side_toolbar=true" allowfullscreen></iframe>
   </div>
 
   <!-- Firebase SDK -->
@@ -134,8 +135,8 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-
     const uid = sessionStorage.getItem("nelsonfx_user_id");
+
     if (!uid) {
       alert("You are not logged in.");
       window.location.href = "login.html";
