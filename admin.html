@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
     import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
@@ -114,19 +114,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Check Admin Login
+    // Admin login
     window.checkAdmin = function () {
       const inputPass = document.getElementById("adminPass").value;
       if (inputPass === "2468Abcd.") {
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("dashboardBox").style.display = "block";
         loadUsers();
+        autoExpireAndNotify(); // check expired subs
       } else {
         alert("Incorrect password.");
       }
     };
 
-    // Load All Users
+    // Load all users
     async function loadUsers() {
       const userTable = document.getElementById("userTable");
       userTable.innerHTML = "";
@@ -151,18 +152,49 @@
       });
     }
 
-    // Update Subscription
+    // Update subscription
     window.updateSub = async function (userId) {
       const input = document.getElementById("sub-" + userId);
       const newSub = parseInt(input.value);
 
       if (!isNaN(newSub)) {
         const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, { subscription: newSub });
+        await updateDoc(userRef, {
+          subscription: newSub,
+          expiredNotified: false // reset alert flag
+        });
         alert("Subscription updated!");
         loadUsers();
       }
     };
+
+    // Auto expire and notify admin
+    async function autoExpireAndNotify() {
+      const querySnapshot = await getDocs(collection(db, "users"));
+
+      querySnapshot.forEach(async (docSnap) => {
+        const user = docSnap.data();
+        const userId = docSnap.id;
+
+        if (user.subscription <= 0 && !user.expiredNotified) {
+          const userRef = doc(db, "users", userId);
+          await updateDoc(userRef, { expiredNotified: true });
+
+          await fetch("https://formsubmit.co/ajax/nwekechinecherem03@gmail.com", {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              _subject: "User Subscription Expired",
+              Name: user.name,
+              Email: user.email,
+              Message: `User ${user.name} (${user.email}) has expired their subscription.`
+            })
+          });
+
+          console.log(`Email sent for expired user: ${user.email}`);
+        }
+      });
+    }
   </script>
 
 </body>
