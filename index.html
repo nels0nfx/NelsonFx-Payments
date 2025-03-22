@@ -42,6 +42,35 @@
       display: inline-block;
     }
 
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid #00ffcc44;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0 0 10px #00ffcc22;
+    }
+
+    .faq-question {
+      cursor: pointer;
+      color: #00ffcc;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+
+    .faq-answer {
+      display: none;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    .testimonial {
+      margin-top: 20px;
+      font-style: italic;
+      color: #eee;
+    }
+
     .footer {
       text-align: center;
       background: #000;
@@ -54,10 +83,12 @@
 </head>
 <body>
 
+  <!-- Header -->
   <header>
     <h1>Welcome to NelsonFx</h1>
   </header>
 
+  <!-- Welcome Section -->
   <section>
     <h2>Learn Forex. Get Premium Signals.</h2>
     <p>Take control of your financial future by joining NelsonFx today.</p>
@@ -74,9 +105,68 @@
     </div>
   </section>
 
+  <!-- About Section -->
+  <section>
+    <h2>About NelsonFx</h2>
+    <div class="card">
+      <p>NelsonFx is dedicated to empowering traders by providing real-time market signals and forex education. Whether you're new to trading or experienced, our platform gives you the tools to succeed in global financial markets.</p>
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section style="background-color: #111;">
+    <h2 style="color: #00ffcc;">Pricing</h2>
+    <div class="card">
+      <p><strong>Premium Signals:</strong></p>
+      <p>₦50,000 / month OR ₦200,000 / year</p>
+      <hr />
+      <p><strong>Forex Learning:</strong></p>
+      <p>₦70,000 / month OR ₦250,000 / year</p>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section>
+    <h2>Frequently Asked Questions</h2>
+    <div class="card">
+      <div class="faq-question" onclick="toggleAnswer(0)">How do I join the premium signal group?</div>
+      <div class="faq-answer">Register an account, make payment, and you'll gain access automatically.</div>
+
+      <div class="faq-question" onclick="toggleAnswer(1)">Can I learn without trading experience?</div>
+      <div class="faq-answer">Absolutely! Our courses are designed for all levels — beginner to pro.</div>
+
+      <div class="faq-question" onclick="toggleAnswer(2)">Do you offer refunds?</div>
+      <div class="faq-answer">We do not offer refunds once a subscription has started.</div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section style="background-color: #111;">
+    <h2 style="color: #00ffcc;">What Our Clients Say</h2>
+    <div class="card testimonial">
+      “I made my first $500 using NelsonFx signals. The results speak for themselves!” – Chuka, Nigeria
+    </div>
+    <div class="card testimonial">
+      “Easy to understand lessons and great support. Highly recommend.” – Amaka, Lagos
+    </div>
+    <div class="card testimonial">
+      “I now trade confidently thanks to their mentorship and daily updates.” – Tunde, Abuja
+    </div>
+  </section>
+
+  <!-- Footer -->
   <div class="footer">
     <p>&copy; 2025 NelsonFx. All rights reserved.</p>
   </div>
+
+  <script>
+    function toggleAnswer(index) {
+      const answers = document.querySelectorAll('.faq-answer');
+      const display = answers[index].style.display;
+      answers.forEach(a => a.style.display = 'none');
+      answers[index].style.display = (display === 'block') ? 'none' : 'block';
+    }
+  </script>
 
 </body>
 </html>
