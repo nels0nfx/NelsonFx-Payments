@@ -63,6 +63,12 @@
       font-size: 14px;
       color: #aaa;
     }
+
+    img.proof-img {
+      width: 120px;
+      border-radius: 6px;
+      border: 1px solid #00ffcc44;
+    }
   </style>
 </head>
 <body>
@@ -92,6 +98,18 @@
       <tbody id="userTable"></tbody>
     </table>
 
+    <h2 style="margin-top: 40px;">Submitted Payment Proofs</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Client Name</th>
+          <th>Amount (₦)</th>
+          <th>Proof</th>
+        </tr>
+      </thead>
+      <tbody id="proofTable"></tbody>
+    </table>
+
     <div class="footer">
       &copy; 2025 NelsonFx Admin Panel
     </div>
@@ -100,7 +118,13 @@
   <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      updateDoc,
+      doc
+    } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCeT-ikui8I4E6SI6rcsiiV2d4qMmhS8AU",
@@ -121,13 +145,14 @@
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("dashboardBox").style.display = "block";
         loadUsers();
-        autoExpireAndNotify(); // check expired subs
+        loadProofs();
+        autoExpireAndNotify();
       } else {
         alert("Incorrect password.");
       }
     };
 
-    // Load all users
+    // Load users
     async function loadUsers() {
       const userTable = document.getElementById("userTable");
       userTable.innerHTML = "";
@@ -152,7 +177,6 @@
       });
     }
 
-    // Update subscription
     window.updateSub = async function (userId) {
       const input = document.getElementById("sub-" + userId);
       const newSub = parseInt(input.value);
@@ -161,14 +185,13 @@
         const userRef = doc(db, "users", userId);
         await updateDoc(userRef, {
           subscription: newSub,
-          expiredNotified: false // reset alert flag
+          expiredNotified: false
         });
         alert("Subscription updated!");
         loadUsers();
       }
     };
 
-    // Auto expire and notify admin
     async function autoExpireAndNotify() {
       const querySnapshot = await getDocs(collection(db, "users"));
 
@@ -193,6 +216,24 @@
 
           console.log(`Email sent for expired user: ${user.email}`);
         }
+      });
+    }
+
+    async function loadProofs() {
+      const proofTable = document.getElementById("proofTable");
+      proofTable.innerHTML = "";
+      const proofSnap = await getDocs(collection(db, "payments"));
+
+      proofSnap.forEach((docSnap) => {
+        const data = docSnap.data();
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${data.name}</td>
+          <td>₦${data.amount}</td>
+          <td><img class="proof-img" src="${data.proof}" alt="Proof of Payment" /></td>
+        `;
+        proofTable.appendChild(row);
       });
     }
   </script>
