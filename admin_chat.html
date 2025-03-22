@@ -3,64 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - NelsonFx</title>
+    <title>Admin Chat - NelsonFx</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #fff;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #1e1e1e;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
-        }
-        h1 {
-            color: #ffcc00;
-        }
-        a {
-            display: inline-block;
-            background-color: #ffcc00;
-            color: #000;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-            text-decoration: none;
-            margin: 10px;
-        }
-        a:hover {
-            background-color: #e6b800;
-        }
+        body { background-color: black; color: white; text-align: center; font-family: Arial, sans-serif; }
+        .btn { padding: 10px 20px; background: blue; color: white; text-decoration: none; border-radius: 5px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Welcome to NelsonFx Admin Panel</h1>
-        <p>Manage your payments, users, and messages.</p>
 
-        <!-- Button to Open Chat Management in a New Tab -->
-        <a href="https://dashboard.tawk.to" target="_blank">🔹 Open Manage Chats</a>
-    </div>
+    <h2>Welcome to Admin Panel</h2>
+    <p>Click below to open and manage chats:</p>
 
-    <!-- Start of Tawk.to Script (Live Chat Widget) -->
-    <script type="text/javascript">
-        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-        (function () {
-            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-            s1.async = true;
-            s1.src = 'https://embed.tawk.to/67ddef5de9ba40190d65c7c6/1imteu2h5';
-            s1.charset = 'UTF-8';
-            s1.setAttribute('crossorigin', '*');
-            s0.parentNode.insertBefore(s1, s0);
-        })();
-    </script>
-    <!-- End of Tawk.to Script -->
+    <a href="https://dashboard.tawk.to/" target="_blank" class="btn">Manage Chats</a>
+
 </body>
 </html>
